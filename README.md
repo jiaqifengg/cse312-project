@@ -1,6 +1,6 @@
 # Team Sigma Polling Project
 
-We are creating a polling webapp using Python3 websockets. This will incorporate multithreading, along with a server sided and client sided script. This will be setup on docker, and then deployed on Heroku.
+We are creating a polling webapp using Python3 websockets. This will incorporate multithreading, database usage, along with a server sided and client sided script. This will be setup on docker, and then deployed on Heroku.
 
 ---
 
