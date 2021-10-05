@@ -16,6 +16,9 @@ def register():
   name = "test"
   return render_template('./static/index.html', title='Welcome', username=name)
 
+@app.errorhandler(404)
+def 
+
 # Run 0.0.0.0 on port 8080
 if __name__ == '__main__':
   app.run(host = '0.0.0.0', debug = True, port = 8080)
