@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+import re
 
 # Initialize Flask App
 app = Flask(__name__,
@@ -11,13 +12,19 @@ def hello():
   return "Hello World!"
 
 # Register page
-@app.route('/auth/register')
+@app.route('/auth/register', methods = ["GET", "POST"])
 def register():
-  name = "test"
-  return render_template('./static/index.html', title='Welcome', username=name)
+  message = ''
+  if 'username' in request.form and 'password' in request.form and request.method = 'POST':
+    username = request.form[]
 
-@app.errorhandler(404)
-def 
+@app.errorhandler(404) #Sets up custom 404 page!
+def pageNotFound(e):
+  return render_template("404.html"), 404
+  
+@app.errorhandler(500) #Sets up custom 505 page!
+def internalServerError(e):
+  return render_template("500.html"), 500
 
 # Run 0.0.0.0 on port 8080
 if __name__ == '__main__':
