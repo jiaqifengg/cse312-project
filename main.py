@@ -12,10 +12,21 @@ def hello():
   return "Hello World!"
 
 # Register page
+
+@app.route('/auth/login', methods = ["GET", "POST"])
+def login():
+  message = ''
+  if 'name' in request.form and 'password' in request.form and request.method == 'POST':
+    name = request.form['name']
+    password = request.form['password']
+
+    if name:
+      msg = "Name already exists in database!"
+
 @app.route('/auth/register', methods = ["GET", "POST"])
 def register():
   message = ''
-  if 'name' in request.form and 'password' in request.form and request.method = 'POST':
+  if 'name' in request.form and 'password' in request.form and request.method == 'POST':
     name = request.form['name']
     password = request.form['password']
 
