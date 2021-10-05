@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+#from flask_socketio import SocketIO, send
 import re
 
 # Initialize Flask App
@@ -6,10 +7,11 @@ app = Flask(__name__,
             template_folder='templates',
             static_folder='static')
 
+
 # Home page
 @app.route('/')
 def hello():
-  return "Hello World!"
+  return render_template("./static/index.html")
 
 # Register page
 
@@ -44,3 +46,4 @@ def internalServerError(e):
 # Run 0.0.0.0 on port 8080
 if __name__ == '__main__':
   app.run(host = '0.0.0.0', debug = True, port = 8080)
+  #socketio.run(app)
