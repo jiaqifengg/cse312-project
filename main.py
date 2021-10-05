@@ -15,8 +15,12 @@ def hello():
 @app.route('/auth/register', methods = ["GET", "POST"])
 def register():
   message = ''
-  if 'username' in request.form and 'password' in request.form and request.method = 'POST':
-    username = request.form[]
+  if 'name' in request.form and 'password' in request.form and request.method = 'POST':
+    name = request.form['name']
+    password = request.form['password']
+
+    if name:
+      msg = "Name already exists in database!"
 
 @app.errorhandler(404) #Sets up custom 404 page!
 def pageNotFound(e):
