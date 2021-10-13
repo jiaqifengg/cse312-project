@@ -6,15 +6,19 @@
   <title>Document</title>
 </head>
 <body>
-  <div style = "outline-style: solid; outline-width: 2px; text-align: center; outline-color: black; display: block; margin-left: auto; margin-right: auto; width: 25%;">
+  
+  <div style = "outline-style: solid; outline-width: 2px; text-align: center; outline-color: black; display: block; margin-left: auto; margin-right: auto; width: 50%;">
         <h1>Register Page</h1>
         
         <form action="/register" id="comment-form" method="post" enctype="multipart/form-data">
             <label for="text-form-name">Name: </label>
-            <input id="text-form-name" style = "padding: 5px 10px 5px 0px" type="text" name="name">
+            <input id="text-form-name" style = "padding: 5px 10px 5px 0px" type="text" name="name" required/>
+            <br/>
+            <label for="text-form-name">Email: </label>
+            <input id="text-form-name" style = "padding: 5px 10px 5px 0px" type="email" name="email" required/>
             <br/>
             <label for="form-password">Password: </label>
-            <input id="text-form-password" style = "padding: 5px 10px 5px 0px" type="text" name="password">
+            <input id="text-form-password" style = "padding: 5px 10px 5px 0px" type="password" name="password" required/>
             <br/><br/>
             <input style = "padding: 5px; width: 100px" type="submit" value="Register">
             <br/>
