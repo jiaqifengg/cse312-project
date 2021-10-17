@@ -15,7 +15,7 @@ body,html {
   background-color: #F2DD93;
 }
 
-.login-form {
+.register-form, .login-form {
   height:100%;
   margin:auto;
 }
