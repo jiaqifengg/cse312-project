@@ -1,20 +1,101 @@
 <html>
     <head>
       <meta charset="UTF-8">
-      <link rel="stylesheet" href="templates/login.css">
-      <title>Chattorama</title>
-      <h1 id="header"> Welcome to Chattorama!</h1>
+      <title>Chatorama</title>
+      <h1 id="header"> Welcome to Chatorama!</h1>
     </head>
     <body>     
-      <form class="login-form" action="/" method="post">
+      <form class="login-form" action="/auth/register" method="post">
         <div class="container">
           <h1>Register</h1>
           <div class="inputbox">
             <input type="text" placeholder="Username" name="username" autocomplete="off" required>
             <input type="password" placeholder="Password" name="password"  autocomplete="off" required>
-            <input type="button" type="Register" value="register">
+            <input type="submit" name="submit" value="Register">
           </div>
         </div>
       </form>
     </body>
+
+<style>
+* {
+background-color:#1f1f1f;
+margin:0;
+}
+
+body,html {
+height:100%;
+display:block;
+}
+
+#header {
+text-align:left;
+color:#FFF;
+padding:5px;
+background-color: #F2DD93;
+}
+
+.register-form, .login-form {
+height:100%;
+margin:auto;
+}
+
+.container {
+width:20%;
+height:100%;
+border:30px solid #F2DD93;
+background-color:#F2DD93;
+text-align:center;
+margin:left;
+}
+
+.inputbox {
+background-color:#F2DD93;
+position:relative;
+top:30%;
+}
+
+.container > h1,p,a {
+background-color:#F2DD93;
+color:#FFF;
+text-align:center;
+position:relative;
+top:30%;
+}
+
+input[type=text],input[type=password] {
+width:60%;
+display:inline-block;
+border:1px solid #ccc;
+border-radius:4px;
+color:grey;
+box-sizing:border-box;
+background:#FFF;
+margin:8px 0;
+padding:12px 20px;
+}
+
+input[type=submit] {
+width:60%;
+display:inline-block;
+color:#FFF;
+border:1px solid #E1C356;
+background-color:#E1C356;
+border-radius:4px;
+margin:8px 0;
+padding:12px 20px;
+}
+
+input[type=submit]:hover {
+width:60%;
+display:inline-block;
+color:#FFF;
+border:1px solid #E1C356;
+background-color:#ffc800;
+border-radius:10px;
+margin:8px 0;
+padding:12px 20px;
+cursor: pointer;
+}
+</style>
 </html> 

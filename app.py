@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from flask_mysqldb import MySQL
 #from flask_socketio import SocketIO, send
 
 import re
@@ -12,46 +13,47 @@ app = Flask(__name__,
 app.config['MYSQL_HOST'] = '0.0.0.0'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = ''
+app.config['MYSQL_DB'] = '<database name>'
 
-
-#mysql = MySQL(app)
+mysql = MySQL(app)
 
 ########## HOME PAGE ##########
 @app.route('/')
 def home():
+  #cur = mysql.connection.cursor()
+
+  #cur.execute('''CREATE TABLE database_test1 (id INTEGER, username VARCHAR(20), password VARCHAR(20))''')
+  #mysql.connection.commit()
+
+  print("DONE!")
   return render_template("./static/index.html")
 
 ########## LOGIN PAGE ##########
 @app.route('/auth/login', methods = ["GET", "POST"])
 def login():
   message = ''
-  if 'name' in request.form and 'password' in request.form and request.method == 'POST':
-    name = request.form['name']
-    email = request.form['email']
-    password = request.form['password']
-
-    if name:
-      msg = "Name already exists in database!"
-    elif email:
-      msg = "Email already exists in database!"
-    else:
-      msg = "Success!"
+  
+  if request.method == "POST":
+    message = 'login code here'
+  else:
+    return render_template('./auth/login.html')
 
 ########## REGISTER PAGE ##########
 @app.route('/auth/register', methods = ["GET", "POST"])
 def register():
-  if request.method == 'POST':
-    ## if statement needs to be modified
-
-    name = request.form['name']
-    email = request.form['email']
+  msg = ''
+  
+  if request.method == "POST" and 'username' in request.form and 'password' in request.form:
+    username = request.form['username']
     password = request.form['password']
-
-  for entries in request.form:
-    print("entries are ", entries)
-
-  return render_template("./auth/register.html")
+    cur= mysql.connection.cursor()
+    cur.execute("INSERT INTO <database name> (username,password) VALUES (%s,%s)",(username,password))
+    mysql.connection.commit()
+    cur.close()
+    print("Success!")
+  else:
+    print("Form isn't filled out!")
+  return render_template('./auth/register.html', msg=msg)
 
 ########## 404 PAGE ##########
 @app.errorhandler(404) #Sets up custom 404 page!
