@@ -12,3 +12,8 @@ Features:
 4. Private messaging feature to allow uers to DM each other.
 5. User profiles with custom features like uploading profile picture
 6. Polling feature allowing users to create polls or questions
+
+
+Configuration:
+1. Change username, password, root_password from docker-compose.yml
+2. Create config.py inside backend 

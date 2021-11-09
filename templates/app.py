@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from flask_mysqldb import MySQL
+from database.databaseModule import database
 #from flask_socketio import SocketIO, send
 
 import re
@@ -10,20 +10,13 @@ app = Flask(__name__,
             template_folder='templates',
             static_folder='static')
 
-app.config['MYSQL_HOST'] = '0.0.0.0'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = '<database name>'
-
-mysql = MySQL(app)
+database = database(app)
+# Jieyi will update this later
+# insert the default profile picture
 
 ########## HOME PAGE ##########
 @app.route('/')
 def home():
-  #cur = mysql.connection.cursor()
-
-  #cur.execute('''CREATE TABLE database_test1 (id INTEGER, username VARCHAR(20), password VARCHAR(20))''')
-  #mysql.connection.commit()
 
   print("DONE!")
   return render_template("./static/index.html")
@@ -46,10 +39,13 @@ def register():
   if request.method == "POST" and 'username' in request.form and 'password' in request.form:
     username = request.form['username']
     password = request.form['password']
-    cur= mysql.connection.cursor()
-    cur.execute("INSERT INTO <database name> (username,password) VALUES (%s,%s)",(username,password))
-    mysql.connection.commit()
-    cur.close()
+
+    # Jieyi will update this later
+    #cur= mysql.connection.cursor()
+    #cur.execute("INSERT INTO <database name> (username,password) VALUES (%s,%s)",(username,password))
+    #mysql.connection.commit()
+    #cur.close()
+
     print("Success!")
   else:
     print("Form isn't filled out!")
