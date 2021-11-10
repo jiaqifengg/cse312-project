@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from database.databaseModule import database
+#from database.databaseModule import database
 #from flask_socketio import SocketIO, send
 
 import re
@@ -10,7 +10,7 @@ app = Flask(__name__,
             template_folder='templates',
             static_folder='static')
 
-database = database(app)
+#database = database(app)
 # Jieyi will update this later
 # insert the default profile picture
 
