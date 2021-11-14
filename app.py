@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from werkzeug.security import generate_password_hash, check_password_hash
 #from database.databaseModule import database
 #from flask_socketio import SocketIO, send
 
@@ -25,11 +26,20 @@ def home():
 @app.route('/auth/login', methods = ["GET", "POST"])
 def login():
   message = ''
+  if request.method == "POST" and 'username' in request.form and 'password' in request.form:
+    username = request.form['username']
+    password = request.form['password']
+
+    # check if an account exists 
+    # will fix later once database connection is established in this file
+    acc_exists = True 
+    if acc_exists:
+      # to be discussed on what to do once user logs in
+      pass
+    else:
+      message = 'Incorrect username or password'
   
-  if request.method == "POST":
-    message = 'login code here'
-  else:
-    return render_template('./auth/login.html')
+  return render_template('./auth/login.html')
 
 ########## REGISTER PAGE ##########
 @app.route('/auth/register', methods = ["GET", "POST"])
@@ -39,7 +49,8 @@ def register():
   if request.method == "POST" and 'username' in request.form and 'password' in request.form:
     username = request.form['username']
     password = request.form['password']
-
+    # need to check if username exists and add to the database with a hashed password 
+    
     # Jieyi will update this later
     #cur= mysql.connection.cursor()
     #cur.execute("INSERT INTO <database name> (username,password) VALUES (%s,%s)",(username,password))
