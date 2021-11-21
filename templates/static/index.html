@@ -1,31 +1,93 @@
 <html>
     <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <title>Chatorama</title>
         <link rel="stylesheet" href="./static/style.css">
     </head>
 
     <style>
         * {
-            margin: 1;
+            margin: 0;
             padding: 0;
+        }
+
+        img.profile {
+            width: 50px;
+            height: 50px;
+            vertical-align: middle;
+            border: 1px solid white;
+            border-radius: 50px
+        }
+        .card {
+            display: inline-block;
         }
     </style>
     <body>
         
-        <h1 style = "background: #73fbd3ff; background: linear-gradient(to right, #73fbd3ff 0%, #44e5e7ff 25%, #59d2feff 50%, #4a8fe7ff 75%, rgb(27, 69, 255) 100%);
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                    font-size: 40px">
-        <center>Welcome to Chatorama!</center>
-        </h1>
-        <div style = "color: blue; font-weight: 1000px; font-size: 18px; position: absolute; top: 15px; left: 15px; text-align: left;">
-            <b>
-            <label for="text-form-name">Welcome back: </label>
-            <label name="name">%name%</label>
-            </b>
+        <nav class="navbar navbar-expand navbar-dark bg-primary">
+            <a style = "color: white"class="navbar-brand" href="#">Chatorama</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+              <ul class="navbar-nav md">
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Messages</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Profile</a>
+                </li>
+              </ul>
+            
+              
+            </div>
+            <span style = "color: white; margin-right: 5px;" class="navbar-text">
+                Welcome back: {name}!
+            </span>
+            
+            <img class = "profile" src="https://avatarfiles.alphacoders.com/107/107751.jpg" alt="Avatar" class="avatar">
+        </nav>
+        
+        <div class="card" style="width: 15rem;">
+            <input value="{token}" name ="xsrf_token" hidden>
+            <div class="card-body">
+              <h4 class="card-title">Bob</h4>
+              <h6 class="card-subtitle mb-2 text-muted">4:50PM EST</h6>
+              <img style = "position: absolute; top: 10px; right: 10px" class = "profile" src="https://avatarfiles.alphacoders.com/107/107751.jpg" alt="Avatar" class="avatar">
+              <p class="card-text">Hello world, testing here and back there. This is a test of the card.</p>
+              <a href="#" class="card-link"><img style = "width: 200px; height: auto" src = "https://photographycourse.net/wp-content/uploads/2020/02/Portrait-vs-Landscape-Featured-Image-3.jpg"></img></a>
+            </div>
         </div>
+        <div class="card" style="width: 15rem;">
+            <input value="{token}" name ="xsrf_token" hidden>
+            <div class="card-body">
+              <h4 class="card-title">Bob</h4>
+              <h6 class="card-subtitle mb-2 text-muted">4:50PM EST</h6>
+              <img style = "position: absolute; top: 10px; right: 10px" class = "profile" src="https://avatarfiles.alphacoders.com/107/107751.jpg" alt="Avatar" class="avatar">
+              <p class="card-text">Hello world, testing here and back there. This is a test of the card.</p>
+              <a href="#" class="card-link"><img style = "width: 200px; height: auto" src = "https://photographycourse.net/wp-content/uploads/2020/02/Portrait-vs-Landscape-Featured-Image-3.jpg"></img></a>
+            </div>
+        </div>
+        <div class="card" style="width: 15rem;">
+            <input value="{token}" name ="xsrf_token" hidden>
+            <div class="card-body">
+              <h4 class="card-title">Bob</h4>
+              <h6 class="card-subtitle mb-2 text-muted">4:50PM EST</h6>
+              <img style = "position: absolute; top: 10px; right: 10px" class = "profile" src="https://avatarfiles.alphacoders.com/107/107751.jpg" alt="Avatar" class="avatar">
+              <p class="card-text">Hello world, testing here and back there. This is a test of the card.</p>
+              <a href="#" class="card-link"><img style = "width: 200px; height: auto" src = "https://photographycourse.net/wp-content/uploads/2020/02/Portrait-vs-Landscape-Featured-Image-3.jpg"></img></a>
+            </div>
+        </div>
+          
+        
 
-        <form action="/comment" id="comment-form" method="post" enctype="multipart/form-data">
+        <!--<form action="/comment" id="comment-form" method="post" enctype="multipart/form-data">
             <input value="{token}" name ="xsrf_token" hidden>
             <br>
             <div style = "width: 90%; height: 50%; padding: 5px; outline: 1px solid black;">
@@ -46,11 +108,13 @@
                 <input style = "margin-left: 15px; width: 1400px; height: 50px; margin-bottom: 5px" id="form-comment" type="text" name="comment" required/>  
                 <input style = "margin-right: 5px; background: #161616; color: white; width: 150px; height: 50px; font-size: 17px; border-radius: 10px" type="submit" value="Submit">
             </div>
+        </form>-->
+        <form style = "text-align: center; position: absolute; bottom: 5px; width: 100%">
+            <input value="{token}" name ="xsrf_token" hidden>
+            <input style = "width: 25%" placeholder = "Comment your thoughts here!" type = "text" name = "name" required />
+            <input type="file" id="form-file" name="filename" name="upload">
+            <input style = "width: 10%" class = "myButton" type="submit" value="Submit">
         </form>
-
-        <button style = "background-color: blue; color: white; font-size: 25px; border-radius: 10px; padding: 8px; position: absolute; top: 5px; right: 10px; text-align: right" class="btn">
-        <i class="fa fa-home"></i></button>
-
         <ul id = "messages"></ul>
 
     
