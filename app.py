@@ -1,9 +1,13 @@
 from flask import Flask, render_template, request
 from werkzeug.security import generate_password_hash, check_password_hash
-#from database.databaseModule import database
+from database.user_auth import password_vaild, username_vaild
+from database.databaseModule import database
+from database.dbconfig import Dbconfig 
+from flask_mysqldb import MySQL
 #from flask_socketio import SocketIO, send
 
 import re
+
 
 # Initialize Flask App
 
@@ -11,14 +15,16 @@ app = Flask(__name__,
             template_folder='templates',
             static_folder='static')
 
-#database = database(app)
-# Jieyi will update this later
-# insert the default profile picture
+app.config['MYSQL_HOST'] = Dbconfig.DATABASE_CONFIG['host']
+app.config['MYSQL_USER'] = Dbconfig.DATABASE_CONFIG['user']
+app.config['MYSQL_PASSWORD'] = Dbconfig.DATABASE_CONFIG['password']
+app.config['MYSQL_DB'] = Dbconfig.DATABASE_CONFIG['database']
+mysql = MySQL(app)
+mysql = database(mysql)
 
 ########## HOME PAGE ##########
 @app.route('/')
 def home():
-
   print("DONE!")
   return render_template("./static/index.html")
 
@@ -31,9 +37,9 @@ def login():
     password = request.form['password']
 
     # check if an account exists 
-    # will fix later once database connection is established in this file
-    acc_exists = True 
+    acc_exists = mysql.check_username_exist(username)
     if acc_exists:
+      # check the password if it's vaild
       # to be discussed on what to do once user logs in
       pass
     else:
@@ -49,17 +55,31 @@ def register():
   if request.method == "POST" and 'username' in request.form and 'password' in request.form:
     username = request.form['username']
     password = request.form['password']
-    # need to check if username exists and add to the database with a hashed password 
     
-    # Jieyi will update this later
-    #cur= mysql.connection.cursor()
-    #cur.execute("INSERT INTO <database name> (username,password) VALUES (%s,%s)",(username,password))
-    #mysql.connection.commit()
-    #cur.close()
+    msg = "Register successfully."
 
-    print("Success!")
+    # check if the username exist
+    if mysql.check_username_exist(username):
+      msg = 'Username already exists.'
+      return render_template('./auth/register.html', msg=msg)
+    # check the username
+    check_username = username_vaild(username)
+    if not check_username[0]:
+      msg = check_username[1]
+      return render_template('./auth/register.html', msg=msg)
+    # check password
+    check_password = password_vaild(password)
+    if not check_password[0]:
+      msg = check_password[1]
+      return render_template('./auth/register.html', msg=msg)
+
   else:
+    msg = "Please fill out the form."
     print("Form isn't filled out!")
+
+  # successfully register
+  # store username and password in database
+  db.register(username, password)
   return render_template('./auth/register.html', msg=msg)
 
 ########## 404 PAGE ##########

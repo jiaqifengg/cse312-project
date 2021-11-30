@@ -14,6 +14,6 @@ Features:
 6. Polling feature allowing users to create polls or questions
 
 
-Configuration:
+Database Configuration:
 1. Change username, password, root_password from docker-compose.yml
-2. Create config.py inside backend 
+2. Check database/dbconfig.py 
