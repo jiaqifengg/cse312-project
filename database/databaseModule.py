@@ -1,11 +1,11 @@
 from database.user_auth import *
-import MySQLdb.cursors
+
 
 class database:
     def __init__(self, mysql):
         self.mysql = mysql
 
-        self.mycursor = cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        self.mycursor = self.mysql.connection.cursor()
 
         create_user_info_table = "CREATE TABLE IF NOT EXISTS account ("
         create_user_info_table += "ID MEDIUMINT NOT NULL AUTO_INCREMENT, "
@@ -19,7 +19,7 @@ class database:
         
         self.mycursor.execute(create_user_info_table)
         
-        self.mysql.commit()            
+        mysql.commit()            
 
 
     def print_table(self):
