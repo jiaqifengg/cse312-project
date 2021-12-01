@@ -6,7 +6,8 @@ WORKDIR /root
 
 COPY . .
 
-
+RUN FLASK_APP==app.py 
+RUN FLASK_ENV==development
 RUN pip install flask-mysqldb
 RUN pip install bcrypt
 
