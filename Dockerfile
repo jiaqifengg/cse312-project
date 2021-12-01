@@ -7,7 +7,6 @@ WORKDIR /root
 COPY . .
 
 
-RUN pip install -r requirements.txt
 RUN pip install flask-mysqldb
 RUN pip install bcrypt
 

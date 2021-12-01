@@ -19,9 +19,9 @@ app.config['MYSQL_HOST'] = Dbconfig.DATABASE_CONFIG['host']
 app.config['MYSQL_USER'] = Dbconfig.DATABASE_CONFIG['user']
 app.config['MYSQL_PASSWORD'] = Dbconfig.DATABASE_CONFIG['password']
 app.config['MYSQL_DB'] = Dbconfig.DATABASE_CONFIG['database']
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 mycursor = mysql.connection.cursor()
+
 create_user_info_table = "CREATE TABLE IF NOT EXISTS account ("
 create_user_info_table += "ID MEDIUMINT NOT NULL AUTO_INCREMENT, "
 create_user_info_table += "username VARCHAR(50) NOT NULL, "
@@ -31,7 +31,9 @@ create_user_info_table += "hashed_token_binary BLOB DEFAULT NULL, "
 create_user_info_table += "exist_status BOOLEAN DEFAULT TRUE"
 create_user_info_table += "PRIMARY KEY (ID, username)"
 create_user_info_table += "); "
+
 mycursor.execute(create_user_info_table)
+
 mysql.commit()  
 
 
@@ -92,7 +94,7 @@ def register():
 
   # successfully register
   # store username and password in database
-  db.register(username, password)
+  #db.register(username, password)
   return render_template('./auth/register.html', msg=msg)
 
 ########## 404 PAGE ##########
