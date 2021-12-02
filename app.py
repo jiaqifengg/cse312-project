@@ -1,113 +1,103 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, json, url_for, redirect, request, session
+from flask_socketio import SocketIO, emit, join_room, leave_room
+from flask_login import current_user, login_user, logout_user, login_required
+from flask_pymongo import PyMongo
+import pymongo, os, re
+from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
-from database.user_auth import password_vaild, username_vaild
-from database.databaseModule import database
-from database.dbconfig import Dbconfig 
-from flask_mysqldb import MySQL
-#from flask_socketio import SocketIO, send
 
-import re
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
+app.config['SECRET_KEY'] = '5008cafee462ca7c310116be'
 
-# Initialize Flask App
+client = MongoClient("mongodb://0.0.0.0:27017")
+#KEEP FOR DOCKER ==> client = MongoClient("mongo")
+database = client['rocketDatabase']
+userCollection = database['users']
+activeUsers = database['activeUsers']
 
-app = Flask(__name__,
-            template_folder='templates',
-            static_folder='static')
+socketio = SocketIO(app)
 
-app.config['MYSQL_HOST'] = Dbconfig.DATABASE_CONFIG['host']
-app.config['MYSQL_USER'] = Dbconfig.DATABASE_CONFIG['user']
-app.config['MYSQL_PASSWORD'] = Dbconfig.DATABASE_CONFIG['password']
-app.config['MYSQL_DB'] = Dbconfig.DATABASE_CONFIG['database']
-mysql = MySQL(app)
-mycursor = mysql.connection.cursor()
+def html(stuff):
+    return '<html><body>' + stuff + '</body></html>'
 
-create_user_info_table = "CREATE TABLE IF NOT EXISTS account ("
-create_user_info_table += "ID MEDIUMINT NOT NULL AUTO_INCREMENT, "
-create_user_info_table += "username VARCHAR(50) NOT NULL, "
-create_user_info_table += "hashed_password BLOB NOT NULL, "
-create_user_info_table += "profile_pic_path VARCHAR(225) NOT NULL DEFAULT '', "  
-create_user_info_table += "hashed_token_binary BLOB DEFAULT NULL, "
-create_user_info_table += "exist_status BOOLEAN DEFAULT TRUE"
-create_user_info_table += "PRIMARY KEY (ID, username)"
-create_user_info_table += "); "
-
-mycursor.execute(create_user_info_table)
-
-mysql.commit()  
-
-
-########## HOME PAGE ##########
-@app.route('/')
-def home():
-  print("DONE!")
-  return render_template("./static/index.html")
-
-########## LOGIN PAGE ##########
-@app.route('/auth/login', methods = ["GET", "POST"])
-def login():
-  message = ''
-  if request.method == "POST" and 'username' in request.form and 'password' in request.form:
-    username = request.form['username']
-    password = request.form['password']
-
-    # check if an account exists 
-    acc_exists = mysql.check_username_exist(username)
-    if acc_exists:
-      # check the password if it's vaild
-      # to be discussed on what to do once user logs in
-      pass
+count = 0
+@app.route("/")
+def index():
+    loginName = session.get('sessionName')
+    if 'sessionName' in session:
+        #print (session['sessionName'])
+        countUsers = activeUsers.find({}, {"name"}).count()
+        #print(countUsers)
+        if countUsers < 1:
+            activeUsers.insert_one({"name": session['sessionName']})
+        return render_template('index.html')
     else:
-      message = 'Incorrect username or password'
-  
-  return render_template('./auth/login.html')
+        return render_template('notLoggedIn.html')
 
-########## REGISTER PAGE ##########
-@app.route('/auth/register', methods = ["GET", "POST"])
+@app.route("/register", methods = ["POST", "GET"])
 def register():
-  msg = ''
-  
-  if request.method == "POST" and 'username' in request.form and 'password' in request.form:
-    username = request.form['username']
-    password = request.form['password']
-    
-    msg = "Register successfully."
 
-    # check if the username exist
-    if mysql.check_username_exist(username):
-      msg = 'Username already exists.'
-      return render_template('./auth/register.html', msg=msg)
-    # check the username
-    check_username = username_vaild(username)
-    if not check_username[0]:
-      msg = check_username[1]
-      return render_template('./auth/register.html', msg=msg)
-    # check password
-    check_password = password_vaild(password)
-    if not check_password[0]:
-      msg = check_password[1]
-      return render_template('./auth/register.html', msg=msg)
+    if current_user.is_authenticated:
+        return redirect("/")
 
-  else:
-    msg = "Please fill out the form."
-    print("Form isn't filled out!")
+    msg = ''
+    if request.method == "POST":
+        name = request.form['registerName']
+        password = request.form['registerPassword']
+        
 
-  # successfully register
-  # store username and password in database
-  #db.register(username, password)
-  return render_template('./auth/register.html', msg=msg)
+        if name:
+            hashedPassword = generate_password_hash(password)
+            user = userCollection.find_one({"name": name})
 
-########## 404 PAGE ##########
-@app.errorhandler(404) #Sets up custom 404 page!
-def pageNotFound(e):
-  return render_template("404.html"), 404
+            if user:
+                string = "<h3 style = '"'color: red'"'>Name already exists!</h3>"
+                return html(string)
+            else:
+                newUser = userCollection.insert_one({"name": name, "password": hashedPassword})
+                return redirect("/login")
+        else:
+            string = "<h3 style = '"'color: red'"'>Fill out the requirements!</h3>"
+            return html(string)   
 
-########## 500 PAGE ##########
-@app.errorhandler(500) #Sets up custom 505 page!
-def internalServerError(e):
-  return render_template("500.html"), 500
+    return render_template("register.html", msg=msg)
 
-########### Run 0.0.0.0 on port 8080 ##########
+@app.route("/login", methods = ["POST", "GET"])
+def login():
+
+    if current_user.is_authenticated:
+        return redirect("/")
+
+    if request.method == "POST":
+        name = request.form['loginName']
+        inputPassword = request.form['loginPassword']
+        
+        foundUser = userCollection.find_one({"name": name})
+
+        if foundUser == None:
+            string = "<h3 style = '"'color: red'"'>Error, name isn't correctly spelt, or doesn't exist!</h3>"
+            return html(string)
+            
+        name = foundUser['name']
+        databasePassword = foundUser['password']
+
+        test = check_password_hash(databasePassword, inputPassword)
+        if test:
+            session['sessionName'] = name
+            return redirect('/')
+        else:
+            string = "<h3 style = '"'color: red'"'>Error, name or password do not match!</h3>"
+            return html(string)
+    else:    
+        return render_template("login.html")
+
+@app.route('/logout')
+def home():
+    session.pop('sessionName')
+    activeUsers.delete_one({"name": session.get('sessionName')})
+    return redirect('/')
+
 if __name__ == '__main__':
-  app.run(host = '0.0.0.0', debug = True, port = 8080)
-  #socketio.run(app)
+  socketio.run(app)
+  #app.run(debug=True)

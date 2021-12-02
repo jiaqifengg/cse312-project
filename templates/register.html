@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatorama</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <link rel = "stylesheet" href = "/static/css/style.css">
+    <!--<script src = "/static/js/register.js"></script>-->
+</head>
+
+<body>
+
+    <!--
+
+    
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a style = "color: blue"class="navbar-brand" href="#">Chatorama</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Members</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/register">Register <span class="sr-only">(current)</span></a>
+              </li>
+          </ul>
+        </div>
+      </nav>
+    -->
+
+    <nav class="navbar navbar-light bg-light" style="background-color: #e3f2fd;">
+      <a style = "color: blue"class="navbar-brand" href="/">Chatorama</a>
+      <ul class = "itemsSignedIn" style = "align-items: center;"class="navbar-nav ml-auto">
+        <li class="nav-item">
+        <a class="nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" href="/members">Members</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" href="/login">Login</a>
+        </li>
+        <li class="nav-item">
+          <a id = "active" class="nav-link" href="/register">Register</a>
+        </li>
+      </ul>
+    </nav>
+      
+    <div>
+        <div id = "message"></div>
+        <br>
+        <h3 style = "margin-left: 30%; margin-right: 30%; width: 40%">Register here!</h3>
+        <form method = "post" style = "margin-top: 15px; margin-left: 30%; margin-right: 30%; width: 40%" class = "form-register">
+            <label for="registerName" class = "sr-only">Name</label>
+            <input type="name" name="registerName" id="registerName" placeholder="Enter name" class="form-control" required/>
+        
+            <label for="registerPassword" class = "sr-only">Password</label>
+            <input type="password" name="registerPassword" id="registerPassword" placeholder="Enter password" class="form-control" required/>
+            <br>
+            <button type="submit" id="buttonRegister" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+
+    <script src = "/static/js/jquery.js"></script>
+</body>
+
+</html>

@@ -1,2 +1,7 @@
-
-Flask == 0.10.1
+flask
+flask_sockets
+flask_socketio
+flask-login
+pymongo
+FLASK_APP=app.py
+FLASK_ENV=development

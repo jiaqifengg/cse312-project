@@ -1,20 +1,15 @@
-FROM python:3.9.7
+FROM python:latest
 
 ENV HOME /root
-
+ENV PYTHONBUFFERED=1
 WORKDIR /root
 
 COPY . .
+RUN pip install -r requirements.txt
 
-RUN FLASK_APP==app.py 
-RUN FLASK_ENV==development
-RUN pip install flask-mysqldb
-RUN pip install bcrypt
-
-EXPOSE 8080
+EXPOSE 5000
 
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait /wait
-
 RUN chmod +x /wait
 
-CMD /wait && python app.py
+CMD /wait && python3 app.py
