@@ -38,9 +38,6 @@ def index():
 @app.route("/register", methods = ["POST", "GET"])
 def register():
 
-    if current_user.is_authenticated:
-        return redirect("/")
-
     msg = ''
     if request.method == "POST":
         name = request.form['registerName']
@@ -65,9 +62,6 @@ def register():
 
 @app.route("/login", methods = ["POST", "GET"])
 def login():
-
-    if current_user.is_authenticated:
-        return redirect("/")
 
     if request.method == "POST":
         name = request.form['loginName']
