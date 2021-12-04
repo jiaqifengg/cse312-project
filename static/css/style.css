@@ -1,39 +1,38 @@
 * {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .itemsSignedIn {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 .itemsSignedIn > li {
-    text-align: center;
-    display: inline-block;
+  text-align: center;
+  display: inline-block;
 }
 
 .itemsSignedIn2 {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 .itemsSignedIn2 > li {
-    text-align: center;
-    display: inline-block;
+  text-align: center;
+  display: inline-block;
 }
 
 #active {
-    font-size: 25px;
-    font-weight: 800;
-    text-decoration: underline;
+  font-size: 25px;
+  font-weight: 800;
+  text-decoration: underline;
 }
 
 .profile {
-    background-position:50% 50%;
-    background-repeat:no-repeat; 
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
 }
 .profile img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
-
