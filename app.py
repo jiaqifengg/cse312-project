@@ -55,6 +55,9 @@ def index():
     else:
         return render_template('notLoggedIn.html')
 
+@app.route("/members")
+def members():
+    return render_template("members.html")
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
@@ -116,6 +119,15 @@ def home():
     session.pop('sessionName')
     return redirect('/')
 
+########## 404 PAGE ##########
+@app.errorhandler(404) #Sets up custom 404 page!
+def pageNotFound(e):
+  return render_template("404.html"), 404
+
+########## 500 PAGE ##########
+@app.errorhandler(500) #Sets up custom 500 page!
+def internalServerError(e):
+  return render_template("500.html"), 500
 
 @socketio.on("user")
 def connect_user(data):

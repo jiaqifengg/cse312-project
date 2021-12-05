@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatorama</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+      integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+      integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+      crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+      integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+      crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+      integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<nav class="navbar navbar-light bg-light" style="background-color: #e3f2fd;">
+    <a style = "color: blue"class="navbar-brand" href="/">Chatorama</a>
+    <ul class = "itemsSignedIn" style = "align-items: center;"class="navbar-nav ml-auto">
+      <li class="nav-item">
+      <a class="nav-link" href="/">Home</a>
+      </li>
+      <li class="nav-item">
+      <a class="nav-link" href="/members">Members</a>
+      </li>
+      <li class="nav-item">
+      <a id = "nav-link" class="nav-link" href="/login">Login</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/register">Register</a>
+      </li>
+    </ul>
+  </nav>
+<body>
+    <style>
+        .container {
+          display: flex;
+          align-items: center;
+          justify-content: center
+        }
+        img {
+          max-width: 100%
+        }
+        .image {
+          flex-basis: 40%
+        }
+        .text {
+          font-size: 20px;
+          padding-left: 20px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="image">
+          <img src="/static/img/bender.png">
+        </div>
+        <div class="text">
+          <h1>500: Internal Server Error</h1>
+        </div>
+      </div>
+    </body>
+</body>
+</html>
