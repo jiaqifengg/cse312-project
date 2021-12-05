@@ -29,6 +29,8 @@ users = {}
 def html(stuff):
     return '<html><body>' + stuff + '</body></html>'
 
+def cleanHTML(content):
+    return content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('\"', '&quot;').replace('\'', '&#39;')
 
 count = 0
 
@@ -123,11 +125,18 @@ def connect_user(data):
 # when it recieve message print it and send it back to all the client in js file with the bucket "message"
 @socketio.on('private_message')
 def handle_message(data):
+    
+    name = data.get('To')
+    if name not in users:
+        emit('private_message', 'Error, name doesn\'t exist!')
+        return 'error'
 
     sessionID = users[data["To"]]
     # custom data
+    
+    sanitizedMessage = cleanHTML(data['msg'])
     emit('private_message', data["username"] +
-         ":" + data["msg"], room=sessionID)
+         ":" + sanitizedMessage, room=sessionID)
 
 
 if __name__ == '__main__':
