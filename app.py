@@ -3,8 +3,8 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 #from flask_login import current_user, login_user, logout_user, login_required
 #from flask_pymongo import PyMongo
 #import pymongo
-#import os
-#import re
+import os
+import re
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -13,8 +13,7 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = '5008cafee462ca7c310116be'
 
 # change this to whatever you use locally if you test locally
-# client = MongoClient(
-#     "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
+#client = MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 # KEEP FOR DOCKER ==>
 client = MongoClient("mongo")  # for docker
 database = client['rocketDatabase']
@@ -25,7 +24,6 @@ socketio = SocketIO(app)
 
 users = {}
 
-
 def html(stuff):
     return '<html><body>' + stuff + '</body></html>'
 
@@ -33,7 +31,6 @@ def cleanHTML(content):
     return content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('\"', '&quot;').replace('\'', '&#39;')
 
 count = 0
-
 
 @app.route("/")
 def index():
@@ -65,6 +62,24 @@ def register():
     if request.method == "POST":
         name = request.form['registerName']
         password = request.form['registerPassword']
+
+        passwordLength = len(password)
+        uppercaseLetter = re.search('[A-Z]', password)
+        number = re.search('[0-9]', password)
+        special = re.search('[ ~!@#$%^&*()}{\/_:?<> ]', password)
+        
+        if passwordLength < 8:
+            string = "<h3 style = '"'color: red'"'>Password needs at least 8 characters!</h3>"
+            return html(string)
+        elif uppercaseLetter == None:
+            string = "<h3 style = '"'color: red'"'>Password needs at least 1 uppercase character!</h3>"
+            return html(string)
+        elif number == None:
+            string = "<h3 style = '"'color: red'"'>Password needs at least 1 number!</h3>"
+            return html(string)
+        elif special == None:
+            string = "<h3 style = '"'color: red'"'>Password needs at least 1 special character!</h3>"
+            return html(string)
 
         hashedPassword = generate_password_hash(password)
         user = userCollection.find_one({"name": name})
