@@ -6,6 +6,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 import os
 import re
 from pymongo import MongoClient
+from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -20,6 +21,8 @@ database = client['rocketDatabase']
 userCollection = database['users']
 activeUsers = database['activeUsers']
 
+
+allowedImageExtensions = {'png', 'jpg', 'jpeg', 'gif'}
 socketio = SocketIO(app)
 
 users = {}
@@ -120,6 +123,18 @@ def login():
     else:
         return render_template("login.html")
 
+@app.route("/settings")
+def settings():
+    return render_template('settings.html')
+
+@app.route("/settings", methods=["POST", "GET"])
+def uploadImage():
+    if request.method == "POST":
+        if 'file' not in request.files:
+            return 'no file part'
+        imageFile = request.files['file']
+        test = imageFile.filename
+        print(imageFile)
 
 @app.route('/logout')
 def home():
@@ -139,8 +154,8 @@ def internalServerError(e):
 
 @socketio.on("user")
 def connect_user(data):
+    print("CONNECT USER DATA IS:", data)
     users[data] = request.sid
-
 
 # when it recieve message print it and send it back to all the client in js file with the bucket "message"
 @socketio.on('private_message')

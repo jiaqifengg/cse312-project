@@ -2,10 +2,8 @@ $(document).ready(function() {
     var socket = io('http://' + document.domain + ':' + location.port);
 
     socket.on('connect', () => {
-         socket.emit("user",username);
+        socket.emit("user", username);
     });
-    
-
 
     //on click for send messages
     $('#send').on('click', function () {
@@ -20,7 +18,4 @@ $(document).ready(function() {
         console.log(msg)
         // alert(msg)
     })
-
-    
-
 });

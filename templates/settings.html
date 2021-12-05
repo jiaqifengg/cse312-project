@@ -13,27 +13,6 @@
 </head>
 
 <body>
-  <!--
-    <nav class="navbar navbar-expand navbar-light">
-        <a style = "color: blue"class="navbar-brand" href="/">Chatorama</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="nav justify-content-center">
-            <li class="nav-item active">
-              <a class="nav-link" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/members">Members</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">Sign Out</a>
-            </li>
-          </ul>
-    </nav>
-  -->
-
     <nav class="navbar navbar-light bg-light" style="background-color: #e3f2fd;">
       <a style = "color: blue"class="navbar-brand" href="/">Chatorama</a>
       <ul class = "itemsSignedIn" style = "align-items: center;"class="navbar-nav mx-auto">
@@ -41,10 +20,10 @@
         <a class="nav-link" href="/">Home</a>
         </li>
         <li class="nav-item">
-        <a id = "active" class="nav-link" href="/members">Members</a>
+        <a class="nav-link" href="/members">Members</a>
         </li>
         <li class="nav-item">
-        <a class="nav-link" href="/settings">Settings</a>
+        <a id = "active" class="nav-link" href="/settings">Settings</a>
         </li>
       </ul>
       <ul class = "itemsSignedIn2" style = "align-items: center;"class="navbar-nav ml-auto">
@@ -62,7 +41,25 @@
 
 
     <br>
-    <h1>Welcome {{ session.sessionName }} !</h1>
+    <div style = "margin-left: auto; margin-right: auto; width: 600px" class="card">
+      <h5 class="card-header">Settings</h5>
+      <div class="card-body">
+        <h5 class="card-title">Hi {{ session.sessionName }}!</h5>
+        <form method = "POST" enctype = "multipart/form-data">
+          <div class="form-group">
+            Upload your profile image here
+          
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-square-fill" viewBox="0 0 16 16">
+            <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z"/>
+          </svg>
+          <br><br>
+            <input type="file" name="file" required/>
+          </div>
+          <input type="submit" value="Upload">
+          
+        </form>
+      </div>
+    </div>
 
     <script src = "/static/js/jquery.js"></script>
     <script src = "/static/js/script.js"></script>

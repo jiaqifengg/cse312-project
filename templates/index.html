@@ -63,7 +63,7 @@
         <a class="nav-link">Hi, {{ session.sessionName }}!</a>
       </li>
       <li class="profile">
-        <img src="/static/image/kitten.jpeg">
+        <img src="/static/img/kitten.jpeg">
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/logout">Logout</a>
@@ -72,24 +72,34 @@
   </nav>
 
 
-  <br>
+  <div style = "margin-left: 25px;">
   <h1>Welcome {{ session.sessionName }} !</h1>
 
   <div id="left-side">
-    <nav id="sidebar">
-      <h1>ONLINE USERS</h1>
+    <div id = "sidebar">
+      <h2 class = "sidebarTitle">ONLINE USERS</h2>
+      <nav style = "margin: 0" class = "row">
+    
       {% for user in users %}
-      <p class="user">{{user}}</p>
+      <div class = "userBoxes">
+        <!-- ADD IMAGE PROFILE HERE-->
+        <center>
+        <div class = "profile">
+          <img src = "">
+        </div>
+        <br>
+        <b><p class="user">{{user}}</p></b>
+        </center>
+      </div>
 
-      {% endfor %}
-
-    </nav>
+    {% endfor %}
+      </nav>
+    </div>
   </div>
+  <br>
   <div id="right-side">
     <div id="top">
       <div id="display">
-
-
       </div>
     </div>
     <div id="bottom">
@@ -101,6 +111,8 @@
         <button type="button" id="send">Send</button>
       </div>
     </div>
+  </div>
+
   </div>
 
   <script type="text/javascript">
