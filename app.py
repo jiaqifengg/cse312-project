@@ -1,10 +1,10 @@
 from flask import Flask, render_template, json, url_for, redirect, request, session
 from flask_socketio import SocketIO, emit, join_room, leave_room
-from flask_login import current_user, login_user, logout_user, login_required
-from flask_pymongo import PyMongo
-import pymongo
-import os
-import re
+#from flask_login import current_user, login_user, logout_user, login_required
+#from flask_pymongo import PyMongo
+#import pymongo
+#import os
+#import re
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -12,9 +12,11 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 
 app.config['SECRET_KEY'] = '5008cafee462ca7c310116be'
 
-client = MongoClient(
-    "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
-# KEEP FOR DOCKER ==> client = MongoClient("mongo")
+# change this to whatever you use locally if you test locally
+# client = MongoClient(
+#     "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
+# KEEP FOR DOCKER ==>
+client = MongoClient("mongo")  # for docker
 database = client['rocketDatabase']
 userCollection = database['users']
 activeUsers = database['activeUsers']
@@ -36,7 +38,9 @@ def index():
     loginName = session.get('sessionName')
     if 'sessionName' in session:
         #print (session['sessionName'])
-        countUsers = activeUsers.find({"name": session["sessionName"]}).count()
+        #countUsers = activeUsers.find({"name": session["sessionName"]}).count()
+        countUsers = activeUsers.count_documents(
+            {"name": session["sessionName"]})
         # print(countUsers)
         if countUsers < 1:
             activeUsers.insert_one({"name": session['sessionName']})
@@ -127,5 +131,7 @@ def handle_message(data):
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+
+    # while using docker-compose, change debug to true if you want to test locally
+    socketio.run(app, debug=False, port=5000, host="0.0.0.0")
     # app.run(debug=True)

@@ -4,6 +4,7 @@ $(document).ready(function() {
     socket.on('connect', () => {
          socket.emit("user",username);
     });
+    
 
 
     //on click for send messages

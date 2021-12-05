@@ -75,25 +75,31 @@
   <br>
   <h1>Welcome {{ session.sessionName }} !</h1>
 
-  <nav id="sidebar">
-    <h1>ONLINE USERS</h1>
-    {% for user in users %}
-    <p class="user">{{user}}</p>
+  <div id="left-side">
+    <nav id="sidebar">
+      <h1>ONLINE USERS</h1>
+      {% for user in users %}
+      <p class="user">{{user}}</p>
 
-    {% endfor %}
+      {% endfor %}
 
-  </nav>
+    </nav>
+  </div>
   <div id="right-side">
-    <div id="display">
+    <div id="top">
+      <div id="display">
 
 
+      </div>
     </div>
-    <div id="input">
-      <p1>To:</p1>
-      <input type="text" id="toUser">
-      <p1>Message</p1>
-      <input type="text" id="myMessage">
-      <button type="button" id="send">Send</button>
+    <div id="bottom">
+      <div id="input">
+        <p1>To:</p1>
+        <input type="text" id="toUser">
+        <p1>Message</p1>
+        <input type="text" id="myMessage">
+        <button type="button" id="send">Send</button>
+      </div>
     </div>
   </div>
 
