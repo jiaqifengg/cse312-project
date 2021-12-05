@@ -62,27 +62,21 @@ def members():
 @app.route("/register", methods=["POST", "GET"])
 def register():
 
-    msg = ''
     if request.method == "POST":
         name = request.form['registerName']
         password = request.form['registerPassword']
 
-        if name:
-            hashedPassword = generate_password_hash(password)
-            user = userCollection.find_one({"name": name})
+        hashedPassword = generate_password_hash(password)
+        user = userCollection.find_one({"name": name})
 
-            if user:
-                string = "<h3 style = '"'color: red'"'>Name already exists!</h3>"
-                return html(string)
-            else:
-                newUser = userCollection.insert_one(
-                    {"name": name, "password": hashedPassword})
-                return redirect("/login")
-        else:
-            string = "<h3 style = '"'color: red'"'>Fill out the requirements!</h3>"
+        if user:
+            string = "<h3 style = '"'color: red'"'>Name already exists!</h3>"
             return html(string)
+        else:
+            newUser = userCollection.insert_one({"name": name, "password": hashedPassword})
+            return redirect("/login")
 
-    return render_template("register.html", msg=msg)
+    return render_template("register.html")
 
 
 @app.route("/login", methods=["POST", "GET"])
@@ -104,10 +98,9 @@ def login():
         test = check_password_hash(databasePassword, inputPassword)
         if test:
             session['sessionName'] = name
-
             return redirect('/')
         else:
-            string = "<h3 style = '"'color: red'"'>Error, name or password do not match!</h3>"
+            string = "<h3 style = '"'color: red'"'>Password is incorrect!</h3>"
             return html(string)
     else:
         return render_template("login.html")
