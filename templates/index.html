@@ -156,7 +156,7 @@
 
   <div id="left-side">
     <nav id="sidebar">
-      <p>ONLINE USERS</p>
+      <h4 style = "border-bottom: 1px solid black; padding: 5px 10px 0px 10px">ONLINE USERS</h4>
       <div id="users">
         {% for user in users %}
         <p class="user">{{user}}</p>
@@ -164,6 +164,33 @@
 
       </div>
     </nav>
+  </div>
+
+  <div class = "container">
+    <center><h3 style = "padding: 5px">Messages</h3></center>
+      <ul class = "chatBoxes">
+
+        <!--MAKE SURE TO INCLUDE THIS <LI> TAG WHEN DOING TEMPLATES -->
+        <li class = "box">
+          <div class = "chatProfile">
+            <img class = "profileImageIcon" src = "/static/img/kitten.jpeg">
+            <h6>test name</h6>
+          </div>
+          <p class = "message">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+        </li>
+        <!--                                                        -->
+        
+      </ul>
+      <br>
+      <form>
+        <div style = "display: flex;">
+          <div style = "width: 85%" class="form-group">
+            <input type="text" class="form-control" id="sendMessage" placeholder="Enter message!">
+          </div>
+  
+          <button style = "width: 15%; height: 39px" type="submit" class="btn btn-primary">Send</button>
+        </div>
+      </form>
   </div>
 
   <div id="right-side">
@@ -180,9 +207,11 @@
         <h1 id="dmUser"></h1>
         <!-- <p1>To:</p1>
         <input type="text" id="toUser"> -->
-        <p1>Message</p1>
-        <input type="text" id="myMessage">
-        <button type="button" id="send">Send</button>
+        <div class = "bottomSend">
+          <p1>Message</p1>
+          <input type="text" id="myMessage">
+          <button type="button" id="send">Send</button>
+        </div>
       </div>
     </div>
   </div>
