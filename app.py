@@ -58,9 +58,7 @@ def index():
             allUsers.append(user["name"])
         return render_template('index.html', username=loginName, users=allUsers)
     else:
-        msg = "You weren't logged in!"
-        notAuth = True
-        return render_template('register.html', msg=msg, auth=notAuth)
+        return render_template('notLoggedIn.html')
 
 
 @app.route("/members")
