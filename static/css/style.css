@@ -61,3 +61,12 @@ h2.sidebarTitle {
   padding: 10px;
   border-color: black;
 } */
+
+/* login and register html navbar*/
+#my-navbar {
+  background-color: #005bbb;
+}
+
+#register, #chatorama-title, #login, #headers {
+  color: white; 
+}

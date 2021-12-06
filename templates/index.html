@@ -72,28 +72,28 @@
     </nav>
   -->
 
-  <nav class="navbar navbar-light bg-light" style="background-color: #e3f2fd;">
-    <a style="color: blue" class="navbar-brand" href="/">Chatorama</a>
-    <ul class="itemsSignedIn" style="align-items: center;" class="navbar-nav mx-auto">
+  <nav class="navbar navbar-light" id="my-navbar">
+    <a class="navbar-brand" href="/" id="chatorama-title">Chatorama</a>
+    <ul class="itemsSignedIn" class="navbar-nav mx-auto">
       <li class="nav-item">
-        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/" id="headers">Home</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/members">Members</a>
+        <a class="nav-link" href="/members" id="headers">Members</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/settings">Settings</a>
+        <a class="nav-link" href="/settings" id="headers">Settings</a>
       </li>
     </ul>
     <ul class="itemsSignedIn2" style="align-items: center;" class="navbar-nav ml-auto">
-      <li class="nav-item">
-        <a class="nav-link">Hi, {{ session.sessionName }}!</a>
-      </li>
       <li class="profile">
         <img src="/static/img/kitten.jpeg">
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/logout">Logout</a>
+        <a class="nav-link" id="headers">Hi, {{ session.sessionName }}!</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/logout" id="headers">Logout</a>
       </li>
     </ul>
   </nav>

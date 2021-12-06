@@ -58,7 +58,9 @@ def index():
             allUsers.append(user["name"])
         return render_template('index.html', username=loginName, users=allUsers)
     else:
-        return render_template('notLoggedIn.html')
+        msg = "You weren't logged in!"
+        notAuth = True
+        return render_template('register.html', msg=msg, auth=notAuth)
 
 
 @app.route("/members")
@@ -107,7 +109,6 @@ def register():
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
-
     if request.method == "POST":
         name = request.form['loginName']
         inputPassword = request.form['loginPassword']
