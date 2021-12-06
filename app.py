@@ -14,9 +14,10 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = '5008cafee462ca7c310116be'
 
 # change this to whatever you use locally if you test locally
-#client = MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
+client = MongoClient(
+    "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 # KEEP FOR DOCKER ==>
-client = MongoClient("mongo")  # for docker
+# client = MongoClient("mongo")  # for docker
 database = client['rocketDatabase']
 userCollection = database['users']
 activeUsers = database['activeUsers']
@@ -27,13 +28,17 @@ socketio = SocketIO(app)
 
 users = {}
 
+
 def html(stuff):
     return '<html><body>' + stuff + '</body></html>'
+
 
 def cleanHTML(content):
     return content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('\"', '&quot;').replace('\'', '&#39;')
 
+
 count = 0
+
 
 @app.route("/")
 def index():
@@ -55,9 +60,11 @@ def index():
     else:
         return render_template('notLoggedIn.html')
 
+
 @app.route("/members")
 def members():
     return render_template("members.html")
+
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
@@ -70,7 +77,7 @@ def register():
         uppercaseLetter = re.search('[A-Z]', password)
         number = re.search('[0-9]', password)
         special = re.search('[ ~!@#$%^&*()}{\/_:?<> ]', password)
-        
+
         if passwordLength < 8:
             string = "<h3 style = '"'color: red'"'>Password needs at least 8 characters!</h3>"
             return html(string)
@@ -91,7 +98,8 @@ def register():
             string = "<h3 style = '"'color: red'"'>Name already exists!</h3>"
             return html(string)
         else:
-            newUser = userCollection.insert_one({"name": name, "password": hashedPassword})
+            newUser = userCollection.insert_one(
+                {"name": name, "password": hashedPassword})
             return redirect("/login")
 
     return render_template("register.html")
@@ -123,9 +131,11 @@ def login():
     else:
         return render_template("login.html")
 
+
 @app.route("/settings")
 def settings():
     return render_template('settings.html')
+
 
 @app.route("/settings", methods=["POST", "GET"])
 def uploadImage():
@@ -136,6 +146,7 @@ def uploadImage():
         test = imageFile.filename
         print(imageFile)
 
+
 @app.route('/logout')
 def home():
     activeUsers.delete_one({"name": session.get('sessionName')})
@@ -143,14 +154,25 @@ def home():
     return redirect('/')
 
 ########## 404 PAGE ##########
-@app.errorhandler(404) #Sets up custom 404 page!
+
+
+@app.errorhandler(404)  # Sets up custom 404 page!
 def pageNotFound(e):
-  return render_template("404.html"), 404
+    return render_template("404.html"), 404
 
 ########## 500 PAGE ##########
-@app.errorhandler(500) #Sets up custom 500 page!
+
+
+@app.errorhandler(500)  # Sets up custom 500 page!
 def internalServerError(e):
-  return render_template("500.html"), 500
+    return render_template("500.html"), 500
+
+
+# when client go to "connected" give the username to the client that is connected on "connected"
+@socketio.on("connected")
+def connected(msg):
+    emit("connected", session.get("sessionName"))
+
 
 @socketio.on("user")
 def connect_user(data):
@@ -158,20 +180,25 @@ def connect_user(data):
     users[data] = request.sid
 
 # when it recieve message print it and send it back to all the client in js file with the bucket "message"
+
+
 @socketio.on('private_message')
 def handle_message(data):
-    
+
     name = data.get('To')
     if name not in users:
         emit('private_message', 'Error, name doesn\'t exist!')
         return 'error'
 
     sessionID = users[data["To"]]
+    currentUserSessionID = users[data["username"]]
     # custom data
-    
+
     sanitizedMessage = cleanHTML(data['msg'])
     emit('private_message', data["username"] +
          ":" + sanitizedMessage, room=sessionID)
+    emit('curent_user_message', data["username"] +
+         ":" + sanitizedMessage, room=currentUserSessionID)
 
 
 if __name__ == '__main__':

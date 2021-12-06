@@ -21,6 +21,33 @@
     integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
     crossorigin="anonymous"></script>
   <link rel="stylesheet" href="/static/css/style.css">
+
+
+  <style>
+    #left-side {
+      float: left;
+      text-align: center;
+      width: 300px;
+    }
+
+    #right-side {
+
+      margin-left: 300px;
+    }
+
+    #top-userToDM {
+      text-align: center;
+    }
+
+    #middle-display {
+      height: 450px;
+      overflow-y: auto;
+    }
+
+    #bottom-textbar {
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
@@ -71,7 +98,7 @@
     </ul>
   </nav>
 
-
+<!-- 
   <div style = "margin-left: 25px;">
   <h1>Welcome {{ session.sessionName }} !</h1>
 
@@ -81,9 +108,9 @@
       <nav style = "margin: 0" class = "row">
     
       {% for user in users %}
-      <div class = "userBoxes">
+      <div class = "userBoxes"> -->
         <!-- ADD IMAGE PROFILE HERE-->
-        <center>
+        <!-- <center>
         <div class = "profile">
           <img src = "">
         </div>
@@ -113,6 +140,51 @@
     </div>
   </div>
 
+  </div>
+
+  <script type="text/javascript">
+    const username = `{{username}}`;
+  </script>
+
+
+  <script src="/static/js/jquery.js"></script>
+  <script src="/static/js/script.js"></script> -->
+
+
+  <br>
+  <!-- <h1>Welcome {{ session.sessionName }} !</h1> -->
+
+  <div id="left-side">
+    <nav id="sidebar">
+      <p>ONLINE USERS</p>
+      <div id="users">
+        {% for user in users %}
+        <p class="user">{{user}}</p>
+        {% endfor %}
+
+      </div>
+    </nav>
+  </div>
+
+  <div id="right-side">
+    <div id="top-userToDM">
+      {% for user in users[:1] %}
+      <p id="currentUser">{{user}}</p>
+      {% endfor %}
+    </div>
+    <div id="middle-display">
+
+    </div>
+    <div id="bottom-textbar">
+      <div id="input">
+        <h1 id="dmUser"></h1>
+        <!-- <p1>To:</p1>
+        <input type="text" id="toUser"> -->
+        <p1>Message</p1>
+        <input type="text" id="myMessage">
+        <button type="button" id="send">Send</button>
+      </div>
+    </div>
   </div>
 
   <script type="text/javascript">
