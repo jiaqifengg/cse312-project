@@ -63,8 +63,8 @@ h2.sidebarTitle {
 } */
 
 /* login and register html navbar*/
-#my-navbar {
-  background-color: #005bbb;
+#my-navbar, .navbar-default {
+  background: #005bbb;
 }
 
 #register, #chatorama-title, #login, #headers {
