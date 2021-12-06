@@ -70,3 +70,71 @@ h2.sidebarTitle {
 #register, #chatorama-title, #login, #headers {
   color: white; 
 }
+
+
+.container {
+  width: 50%;
+  margin: auto;
+  outline-color: black;
+  outline-width: 1px;
+  outline-style: solid;
+  background-color: rgb(246, 246, 246);
+  border-radius: 10px;
+  padding-bottom: 25px;
+}
+
+.chatBoxes {
+  display: table-cell;
+  flex-direction: column;
+  list-style-type: none;
+}
+
+.box {
+  background-color: #fcffa9;
+  outline-color: rgb(173, 173, 173);
+  outline-width: 1px;
+  outline-style: solid;
+  padding: 10px 0px 10px 20px;
+  border-radius: 5px;
+}
+
+.chatProfile {
+  float:left;
+  text-align: center;
+  margin-right: 15px;
+}
+
+.chatProfile h6 {
+  font-size: 15px;
+  margin-top: 5px;
+}
+
+
+.profileImageIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+#left-side {
+  position: absolute;
+  width: 250px !important;
+  top: 10%;
+  left: 15px;
+  background-color: #E0E0E0;
+  border: 1px solid black;
+  border-radius: 25px;
+}
+
+#right-side {
+  position: absolute;
+  top: 10%;
+  right: 15px;
+  background-color: #a9b5ff;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.bottomSend {
+  padding: 10px;
+}
