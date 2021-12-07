@@ -9,33 +9,32 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel = "stylesheet" href = "/static/css/style.css">
 </head>
 
 <body>
-  <nav class="navbar navbar-default" id="my-navbar">
-      <a class="navbar-brand" href="/" id="chatorama-title">Chatorama</a>
+    <nav class="navbar navbar-light" style="background-color: #005bbb;">
+      <a style = "color: white"class="navbar-brand" href="/">Chatorama</a>
       <ul class = "itemsSignedIn" style = "align-items: center;"class="navbar-nav mx-auto">
         <li class="nav-item">
-        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/" id="headers">Home</a>
         </li>
         <li class="nav-item">
-        <a class="nav-link" href="/members">Members</a>
+        <a class="nav-link" href="/members" id="headers">Members</a>
         </li>
         <li class="nav-item">
-        <a id = "active" class="nav-link" href="/settings">Settings</a>
+        <a id = "active" class="nav-link" href="/settings" id="headers">Settings</a>
         </li>
       </ul>
       <ul class = "itemsSignedIn2" style = "align-items: center;"class="navbar-nav ml-auto">
-        <li class="nav-item">
-        <a class="nav-link">Hi, {{ session.sessionName }}!</a>
-        </li>
         <li class = "profile">
           <img src = "/static/img/kitten.jpeg">
         </li>
         <li class="nav-item">
-        <a class="nav-link" href="/logout">Logout</a>
+        <a class="nav-link" id="headers">Hi, {{ session.sessionName }}!</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" href="/logout" id="headers">Logout</a>
         </li>
       </ul>
     </nav>
