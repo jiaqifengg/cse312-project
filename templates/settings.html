@@ -20,9 +20,6 @@
         <a class="nav-link" href="/" id="headers">Home</a>
         </li>
         <li class="nav-item">
-        <a class="nav-link" href="/members" id="headers">Members</a>
-        </li>
-        <li class="nav-item">
         <a id = "active" class="nav-link" href="/settings" id="headers">Settings</a>
         </li>
       </ul>
@@ -34,7 +31,7 @@
         <a class="nav-link" id="headers">Hi, {{ session.sessionName }}!</a>
         </li>
         <li class="nav-item">
-        <a class="nav-link" href="/logout" id="headers">Logout</a>
+        <a id = "logoutButton" class="nav-link" href="/logout" id="headers">Logout</a>
         </li>
       </ul>
     </nav>
@@ -46,6 +43,7 @@
       <div class="card-body">
         <h5 class="card-title">Hi {{ session.sessionName }}!</h5>
         <form method = "POST" enctype = "multipart/form-data">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
           <div class="form-group">
             Upload your profile image here
           

@@ -2,11 +2,11 @@ $(document).ready(function () {
   var socket = io("http://" + document.domain + ":" + location.port);
 
   //on connect go to "connected"
-  socket.on("connect", () => {
-    socket.emit("connected", "I am connected");
-  });
+  // socket.on("connect", function () {
+  //   socket.emit("connected", "I am connected");
+  // });
   //when the server sends the username, send it back to the server as "user"
-  socket.on("connected", (username) => {
+  socket.on("connected", function (username) {
     socket.emit("user", username);
   });
 
@@ -15,7 +15,6 @@ $(document).ready(function () {
     var message = $("#myMessage").val();
     var toUser = $("#currentUser").text();
     socket.emit("private_message", {
-      username: username,
       msg: message,
       To: toUser,
     });
@@ -24,16 +23,16 @@ $(document).ready(function () {
   //display incoming messages
   socket.on("private_message", function (msg) {
     $("#middle-display")[0].innerHTML +=
-      '<p style="overflow-wrap: break-word;">' + msg + "</p>";
-    $("#middle-display").scrollTop($("#middle-display")[0].scrollHeight);
+      '<p style="overflow-wrap: break-word; width: 100%;">' + msg + "</p>";
+
     //console.log(msg)
     // alert(msg)
   });
   //display message sent as well
   socket.on("curent_user_message", function (msg) {
     $("#middle-display")[0].innerHTML +=
-      '<p style="overflow-wrap: break-word;">' + msg + "</p>";
-    $("#middle-display").scrollTop($("#middle-display")[0].scrollHeight);
+      '<p style="overflow-wrap: break-word; width: 100%;">' + msg + "</p>";
+
     //console.log(msg)
   });
 

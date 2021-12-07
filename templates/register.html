@@ -31,6 +31,7 @@
         <br>
         <h3 style = "margin-left: 30%; margin-right: 30%; width: 40%">Register here!</h3>
         <form method = "post" style = "margin-top: 15px; margin-left: 30%; margin-right: 30%; width: 40%" class = "form-register">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <label for="registerName" class = "sr-only">Name</label>
             <input type="name" name="registerName" id="registerName" placeholder="Enter name" class="form-control" required/>
         
