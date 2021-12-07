@@ -8,20 +8,22 @@ import re
 from pymongo import MongoClient
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
 app.config['SECRET_KEY'] = '5008cafee462ca7c310116be'
 
 # change this to whatever you use locally if you test locally
-# client = MongoClient(
-#     "mongo://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
+#client = MongoClient(
+#     "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 # KEEP FOR DOCKER ==>
 client = MongoClient("mongo")  # for docker
 database = client['rocketDatabase']
 userCollection = database['users']
 activeUsers = database['activeUsers']
 
+csrf = CSRFProtect(app)
 
 allowedImageExtensions = {'png', 'jpg', 'jpeg', 'gif'}
 socketio = SocketIO(app)
