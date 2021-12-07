@@ -140,3 +140,17 @@ h2.sidebarTitle {
 .bottomSend {
   padding: 10px;
 }
+
+#logoutButton {
+  outline-style: solid;
+  outline-width: 1px;
+  outline-color: white;
+  border-radius: 25px;
+  color: white;
+}
+
+#logoutButton:hover {
+  background-color: white;
+  color: black;
+}
+

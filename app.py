@@ -8,7 +8,7 @@ import re
 from pymongo import MongoClient
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_wtf.csrf import CSRFProtect
+from flask_wtf.csrf import CSRFProtect, CSRFError
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
@@ -41,6 +41,10 @@ def cleanHTML(content):
 
 count = 0
 
+@app.after_request
+def add_header(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    return response
 
 @app.route("/")
 def index():
@@ -154,15 +158,9 @@ def home():
     session.pop('sessionName')
     return redirect('/')
 
-########## 404 PAGE ##########
-
-
 @app.errorhandler(404)  # Sets up custom 404 page!
 def pageNotFound(e):
     return render_template("404.html"), 404
-
-########## 500 PAGE ##########
-
 
 @app.errorhandler(500)  # Sets up custom 500 page!
 def internalServerError(e):
@@ -201,6 +199,9 @@ def handle_message(data):
     emit('curent_user_message', data["username"] +
          ":" + sanitizedMessage, room=currentUserSessionID)
 
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    return render_template('csrf.html'), 400
 
 if __name__ == '__main__':
 

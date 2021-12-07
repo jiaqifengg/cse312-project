@@ -51,35 +51,11 @@
 </head>
 
 <body>
-  <!--
-    <nav class="navbar navbar-expand navbar-light">
-        <a style = "color: blue"class="navbar-brand" href="/">Chatorama</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="nav justify-content-center">
-            <li class="nav-item active">
-              <a class="nav-link" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/members">Members</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">Sign Out</a>
-            </li>
-          </ul>
-    </nav>
-  -->
-
   <nav class="navbar navbar-default" id="my-navbar">
     <a class="navbar-brand" href="/" id="chatorama-title">Chatorama</a>
     <ul class="itemsSignedIn" class="navbar-nav mx-auto">
       <li class="nav-item">
-        <a class="nav-link" href="/" id="headers">Home</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/members" id="headers">Members</a>
+        <a id = "active" class="nav-link" href="/" id="headers">Home</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/settings" id="headers">Settings</a>
@@ -93,7 +69,7 @@
         <a class="nav-link" id="headers">Hi, {{ session.sessionName }}!</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/logout" id="headers">Logout</a>
+        <a id = "logoutButton" class="nav-link" href="/logout" id="headers">Logout</a>
       </li>
     </ul>
   </nav>
