@@ -1,8 +1,8 @@
 from flask import Flask, render_template, json, url_for, redirect, request, session
 from flask_socketio import SocketIO, emit, join_room, leave_room
-#from flask_login import current_user, login_user, logout_user, login_required
-#from flask_pymongo import PyMongo
-#import pymongo
+# from flask_login import current_user, login_user, logout_user, login_required
+# from flask_pymongo import PyMongo
+# import pymongo
 import os
 import re
 from pymongo import MongoClient
@@ -15,7 +15,7 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = '5008cafee462ca7c310116be'
 
 # change this to whatever you use locally if you test locally
-#client = MongoClient(
+# client = MongoClient(
 #     "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 # KEEP FOR DOCKER ==>
 client = MongoClient("mongo")  # for docker
@@ -41,17 +41,20 @@ def cleanHTML(content):
 
 count = 0
 
+
 @app.after_request
 def add_header(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
     return response
 
+
 @app.route("/")
 def index():
     loginName = session.get('sessionName')
+    print(loginName)
     if 'sessionName' in session:
-        #print (session['sessionName'])
-        #countUsers = activeUsers.find({"name": session["sessionName"]}).count()
+        # print (session['sessionName'])
+        # countUsers = activeUsers.find({"name": session["sessionName"]}).count()
         countUsers = activeUsers.count_documents(
             {"name": session["sessionName"]})
         # print(countUsers)
@@ -61,8 +64,9 @@ def index():
         allActiveUsers = activeUsers.find({"name": {"$exists": True}})
         allUsers = []
         for user in allActiveUsers:
-            allUsers.append(user["name"])
-        return render_template('index.html', username=loginName, users=allUsers)
+            if(user["name"] != session.get("sessionName")):
+                allUsers.append(user["name"])
+        return render_template('index.html', users=allUsers)
     else:
         return render_template('notLoggedIn.html')
 
@@ -82,7 +86,7 @@ def register():
         passwordLength = len(password)
         uppercaseLetter = re.search('[A-Z]', password)
         number = re.search('[0-9]', password)
-        special = re.search('[ ~!@#$%^&*()}{\/_:?<> ]', password)
+        special = re.search('[ ~!@#$%^.&*()}{\/_:?<> ]', password)
 
         if passwordLength < 8:
             string = "<h3 style = '"'color: red'"'>Password needs at least 8 characters!</h3>"
@@ -154,13 +158,16 @@ def uploadImage():
 
 @app.route('/logout')
 def home():
-    activeUsers.delete_one({"name": session.get('sessionName')})
+    print("logout   ")
+    # activeUsers.delete_one({"name": session.get('sessionName')})
     session.pop('sessionName')
     return redirect('/')
+
 
 @app.errorhandler(404)  # Sets up custom 404 page!
 def pageNotFound(e):
     return render_template("404.html"), 404
+
 
 @app.errorhandler(500)  # Sets up custom 500 page!
 def internalServerError(e):
@@ -169,7 +176,8 @@ def internalServerError(e):
 
 # when client go to "connected" give the username to the client that is connected on "connected"
 @socketio.on("connected")
-def connected(msg):
+def connected():
+    print("connected: ", session.get("sessionName"))
     emit("connected", session.get("sessionName"))
 
 
@@ -185,23 +193,35 @@ def connect_user(data):
 def handle_message(data):
 
     name = data.get('To')
-    if name not in users:
+    if name not in users or name == session.get("sessionName"):
         emit('private_message', 'Error, name doesn\'t exist!')
         return 'error'
 
     sessionID = users[data["To"]]
-    currentUserSessionID = users[data["username"]]
+    currentUserSessionID = users[session.get("sessionName")]
     # custom data
 
     sanitizedMessage = cleanHTML(data['msg'])
-    emit('private_message', data["username"] +
+    emit('private_message', session.get("sessionName") +
          ":" + sanitizedMessage, room=sessionID)
-    emit('curent_user_message', data["username"] +
+    emit('curent_user_message', session.get("sessionName") +
          ":" + sanitizedMessage, room=currentUserSessionID)
+
+
+@socketio.on("disconnect")
+def disconnect():
+    print("disconnected: ", session.get("sessionName"))
+    del users[session.get("sessionName")]
+    activeUsers.delete_one({"name": session.get('sessionName')})
+    session.pop('sessionName')
+    print(session.get("sessionName"))
+    print(users)
+
 
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
     return render_template('csrf.html'), 400
+
 
 if __name__ == '__main__':
 
