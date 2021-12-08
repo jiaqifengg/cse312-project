@@ -92,6 +92,7 @@ h2.sidebarTitle {
 }
 
 .box {
+  width: 600px;
   background-color: #fcffa9;
   outline-color: rgb(173, 173, 173);
   outline-width: 1px;
@@ -155,20 +156,24 @@ h2.sidebarTitle {
   border-radius: 5px;
 }
 
-#buttonOne {
-  background-color: #9AFDFF
+#upButton {
+  background-color: #9AFDFF;
+  padding: 5px;
 }
-#buttonOne:active {
-  background-color: #65B8FF
-}
-
-#buttonTwo {
-  background-color: #FF9A9A
+#upButton:active {
+  background-color: #65B8FF;
+  padding: 5px;
 }
 
-#buttonTwo:active {
+#downButton {
+  background-color: #FF9A9A;
+  padding: 5px;
+}
+#downButton:active {
   background-color: #FF6565;
+  padding: 5px;
 }
+
 #logoutButton {
   outline-style: solid;
   outline-width: 1px;

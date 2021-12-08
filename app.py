@@ -28,6 +28,7 @@ socketio = SocketIO(app)
 
 users = {}
 usersMessages = {}
+
 post_count = [0]
 posts = {}
 # {id: post:"", upvote:{username:username}, downvote:{username:username}}
@@ -222,16 +223,17 @@ def disconnect():
     print(users)
 
 
-@socketio.on('make_post')
+@socketio.on('create_post')
 def insertPost(data):
-    userPicture = ""
+    userPicture = "/static/img/kitten.jpeg"
     username = session.get('sessionName')
     post = data.get('post')
     temp = {
+        "post-id": post_count[0],
         "post": post,
         "user": [username, userPicture],
-        "upvotes": {},
-        "downvotes": {}
+        "upvotes": {"test1":"test1", "test2":"test2"},
+        "downvotes": {"-1":"-1", "-2":"-2", "-3":"-3"}
     }
     posts[post_count[0]] = temp
     post_count[0] += 1

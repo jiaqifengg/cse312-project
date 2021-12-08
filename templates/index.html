@@ -145,36 +145,37 @@
   <!-- GLOBAL POSTS -->
   <div class = "container">
     <center><h3 style = "padding: 5px">User Posts</h3></center>
-      <div class = "chatContainer">
-        <ul class = "chatBoxes"> <!-- -->
-
-          <div class = "overall">
-            <!--MAKE SURE TO INCLUDE THIS <LI> TAG WHEN DOING TEMPLATES -->
-            <li class = "box">
-              <div class = "chatProfile">
-                <img class = "profileImageIcon" src = "/static/img/kitten.jpeg">
-                <h6>test name</h6>
-              </div>
-              <p class = "message">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-            </li>
-            <div class = "chatComponent">
-              <button id = "buttonOne">Upvote <span style = "padding: 5px" class="badge badge-primary badge-pill">100</span></button><br>
-              <button id = "buttonTwo">Downvote <span style = "padding: 5px" class="badge badge-primary badge-pill">1</span></button>
+    <div class = "chatContainer">
+      <ul class = "chatBoxes" id="postArea"> <!-- -->
+        <div class = "overall">
+          <!--MAKE SURE TO INCLUDE THIS <LI> TAG WHEN DOING TEMPLATES -->
+          <li class = "box">
+            <div class = "chatProfile">
+              <img class = "profileImageIcon" src = "/static/img/kitten.jpeg">
+              <h6>test name</h6>
             </div>
+            <p class = "message">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+          </li>
+          <div class = "chatComponent">
+            <button id = "upButton">Upvote <span class="badge badge-primary badge-pill">100</span></button><br>
+            <button id = "downButton">Downvote <span class="badge badge-primary badge-pill">1</span></button>
           </div>
-        </ul>
-      </div>
+        </div>
+        <br>
+        
+      </ul>
+    </div>
       
-      <br>
-        <form>
-          <div style = "position: relative; display: flex">
-            <div style = "width: 85%" class="form-group">
-              <p hidden id="username_post">{{ session.sessionName }}</p>
-              <input type="text" class="form-control" id="postMessage" placeholder="Create Post!">
-            </div>
-            <button style = "width: 15%; height: 39px" type="button" class="btn btn-primary" id="send_post">Post</button>
-          </div>
-        </form>
+    <br>
+    <form>
+      <div style = "position: relative; display: flex">
+        <div style = "width: 85%" class="form-group">
+          <p hidden id="username_post">{{ session.sessionName }}</p>
+          <input type="text" class="form-control" id="postMessage" placeholder="Create Post!">
+        </div>
+        <button style = "width: 15%; height: 39px" type="button" class="btn btn-primary" id="send_post">Post</button>
+      </div>
+    </form>
   </div>
 
   <div id="right-side">
