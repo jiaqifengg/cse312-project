@@ -142,9 +142,10 @@
     </nav>
   </div>
 
+  <!-- GLOBAL POSTS -->
   <div class = "container">
-    <center><h3 style = "padding: 5px">Messages</h3></center>
-      <ul class = "chatBoxes">
+    <center><h3 style = "padding: 5px">User Posts</h3></center>
+      <ul class = "chatBoxes"> <!-- -->
 
         <!--MAKE SURE TO INCLUDE THIS <LI> TAG WHEN DOING TEMPLATES -->
         <li class = "box">
@@ -154,17 +155,15 @@
           </div>
           <p class = "message">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
         </li>
-        <!--                                                        -->
-        
       </ul>
       <br>
       <form>
         <div style = "display: flex;">
           <div style = "width: 85%" class="form-group">
-            <input type="text" class="form-control" id="sendMessage" placeholder="Enter message!">
+            <p hidden id="username_post">{{ session.sessionName }}</p>
+            <input type="text" class="form-control" id="postMessage" placeholder="Create Post!">
           </div>
-  
-          <button style = "width: 15%; height: 39px" type="submit" class="btn btn-primary">Send</button>
+          <button style = "width: 15%; height: 39px" type="button" class="btn btn-primary" id="send_post">Post</button>
         </div>
       </form>
   </div>

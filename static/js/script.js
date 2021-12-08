@@ -46,5 +46,12 @@ $(document).ready(function () {
     }
 
     //console.log($(this).text());
+    $("#send_post").on("click", function(){
+      var post_msg = $("#postMessage").val();
+      var from_user = $("#username_post").text();
+      socket.emit("make_post", {post:post_msg, from:from_user})
+    })
+
+    socket.on()
   });
 });
