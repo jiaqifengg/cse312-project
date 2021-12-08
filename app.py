@@ -28,6 +28,10 @@ socketio = SocketIO(app)
 
 users = {}
 
+post_count = [0]
+posts = {} 
+# {id: post:"", upvote:{username:username}, downvote:{username:username}} 
+# using dictionary for upvote/downvote for O(1) access of who has voted 
 
 def html(stuff):
     return '<html><body>' + stuff + '</body></html>'
@@ -212,6 +216,21 @@ def disconnect():
     session.pop('sessionName')
     print(session.get("sessionName"))
     print(users)
+
+@socketio.on('make_post')
+def insertPost(data):
+    userPicture = ""
+    username = session.get('sessionName')
+    post = data.get('post')
+    temp = {
+            "post": post,
+            "user": [username, userPicture], 
+            "upvotes": {}, 
+            "downvotes": {}
+            }
+    posts[post_count[0]] = temp
+    post_count[0] += 1
+    emit('make_post', temp, broadcast=True)
 
 
 if __name__ == '__main__':

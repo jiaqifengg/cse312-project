@@ -44,14 +44,21 @@ $(document).ready(function () {
       document.getElementById("currentUser").innerHTML = newUser;
       //console.log(currentUser)
     }
-
     //console.log($(this).text());
   });
 
-  //console.log($(this).text());
-  $("#send_post").on("click", function () {
+  $("#send_post").on("click", function(){
     var post_msg = $("#postMessage").val();
     var from_user = $("#username_post").text();
-    socket.emit("make_post", { post: post_msg, from: from_user });
+    console.log(post_msg)
+    console.log(from_user)
+    socket.emit("make_post", {post:post_msg, from:from_user})
+  });
+
+  socket.on("make_post", function(data){
+    for(const [key, value] of Object.entries(data)){
+      console.log("Here!")
+      console.log(key, value)
+    }
   });
 });
