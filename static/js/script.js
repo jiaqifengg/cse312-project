@@ -55,10 +55,9 @@ $(document).ready(function () {
   });
 
   socket.on("make_post", function (data) {
-    console.log("here")
-    console.log(data)
-    var overallDiv = html_post(data)
-    $("#postArea")[0].innerHTML += overallDiv
+    console.log(Object.keys(data).length)
+    var overallDiv = html_post(data[Object.keys(data).length - 1]);
+    $("#postArea")[0].innerHTML += overallDiv;
   });
 
   function html_post(data) {
@@ -78,8 +77,8 @@ $(document).ready(function () {
                           <p class="message">' + post + '</p>\
                         </li>\
                         <div class="chatComponent" id="post_' + String(post_id) + '">\
-                          <button id="upButton">Upvote <span class="badge badge-primary badge-pill" id="upCounts">' + String(countUp) + '</span></button><br>\
-                          <button id="downButton">Downvote <span class="badge badge-primary badge-pill" id="downCounts">' + String(countDown) + '</span></button>\
+                          <button id="upButton" type="button">Upvote <span class="badge badge-primary badge-pill" id="upCounts">' + String(countUp) + '</span></button><br>\
+                          <button id="downButton" type="button">Downvote <span class="badge badge-primary badge-pill" id="downCounts">' + String(countDown) + '</span></button>\
                         </div>\
                     </div>\
                     <br>'
@@ -87,12 +86,13 @@ $(document).ready(function () {
   };
 
   $("#upButton").on("click", function () {
+    console.log("upButton func")
     var vote = 1
     var id = $(this).parent().attr('id');
     var post_id = id.split("_")[1];
     console.log(id)
     console.log(post_id);
-    socket.emit("vote", { vote: vote});
+    socket.emit("vote", { vote: vote, post_id: post_id});
   });
 
 });

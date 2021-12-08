@@ -237,7 +237,11 @@ def insertPost(data):
     }
     posts[post_count[0]] = temp
     post_count[0] += 1
-    emit('make_post', temp, broadcast=True)
+    emit('make_post', posts, broadcast=True)
+
+@socketio.on('vote')
+def changeVotes(data):
+    pass
 
 
 if __name__ == '__main__':
