@@ -130,9 +130,9 @@
   <br>
   <!-- <h1>Welcome {{ session.sessionName }} !</h1> -->
 
-  <div id="left-side">
-    <nav id="sidebar">
-      <h4 style = "border-bottom: 1px solid black; padding: 5px 10px 0px 10px">ONLINE USERS</h4>
+  <div style = "margin-left: 25px"id="left-side">
+    <navid="sidebar">
+      <h4 style = "background-color: black; border-radius: 25px 25px 0 0; color: #7FFF00; border-bottom: 1px solid black; padding: 5px 10px 0px 10px">ONLINE USERS</h4>
       <div id="users">
         {% for user in users %}
         <p class="user">{{user}}</p>
@@ -145,8 +145,10 @@
   <!-- GLOBAL POSTS -->
   <div class = "container">
     <center><h3 style = "padding: 5px">User Posts</h3></center>
+      <div class = "chatContainer">
       <ul class = "chatBoxes"> <!-- -->
 
+      <div class = "overall">
         <!--MAKE SURE TO INCLUDE THIS <LI> TAG WHEN DOING TEMPLATES -->
         <li class = "box">
           <div class = "chatProfile">
@@ -155,17 +157,27 @@
           </div>
           <p class = "message">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
         </li>
-      </ul>
-      <br>
-      <form>
-        <div style = "display: flex;">
-          <div style = "width: 85%" class="form-group">
-            <p hidden id="username_post">{{ session.sessionName }}</p>
-            <input type="text" class="form-control" id="postMessage" placeholder="Create Post!">
-          </div>
-          <button style = "width: 15%; height: 39px" type="button" class="btn btn-primary" id="send_post">Post</button>
+
+        <div class = "chatComponent">
+          <button id = "buttonOne">Upvote <span style = "padding: 5px" class="badge badge-primary badge-pill">100</span></button><br>
+          <button id = "buttonTwo">Downvote <span style = "padding: 5px" class="badge badge-primary badge-pill">1</span></button>
         </div>
-      </form>
+      </div>
+
+      </ul>
+      </div>
+      
+      
+      <br>
+        <form>
+          <div style = "position: relative; display: flex">
+            <div style = "width: 85%" class="form-group">
+              <p hidden id="username_post">{{ session.sessionName }}</p>
+              <input type="text" class="form-control" id="postMessage" placeholder="Create Post!">
+            </div>
+            <button style = "width: 15%; height: 39px" type="button" class="btn btn-primary" id="send_post">Post</button>
+          </div>
+        </form>
   </div>
 
   <div id="right-side">
