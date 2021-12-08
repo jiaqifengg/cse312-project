@@ -1,39 +1,33 @@
 from flask import Flask, render_template, json, url_for, redirect, request, session
 from flask_socketio import SocketIO, emit, join_room, leave_room
-# from flask_login import current_user, login_user, logout_user, login_required
-# from flask_pymongo import PyMongo
-# import pymongo
+#from flask_login import current_user, login_user, logout_user, login_required
+#from flask_pymongo import PyMongo
+#import pymongo
 import os
 import re
 from pymongo import MongoClient
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_wtf.csrf import CSRFProtect, CSRFError
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
 app.config['SECRET_KEY'] = '5008cafee462ca7c310116be'
 
 # change this to whatever you use locally if you test locally
-# client = MongoClient(
-#     "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
+client = MongoClient(
+    "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 # KEEP FOR DOCKER ==>
-client = MongoClient("mongo")  # for docker
+# client = MongoClient("mongo")  # for docker
 database = client['rocketDatabase']
 userCollection = database['users']
 activeUsers = database['activeUsers']
 
-csrf = CSRFProtect(app)
 
 allowedImageExtensions = {'png', 'jpg', 'jpeg', 'gif'}
 socketio = SocketIO(app)
 
 users = {}
 
-post_count = [0]
-posts = {} 
-# {id: post:"", upvote:{username:username}, downvote:{username:username}} 
-# using dictionary for upvote/downvote for O(1) access of who has voted 
 
 def html(stuff):
     return '<html><body>' + stuff + '</body></html>'
@@ -46,19 +40,13 @@ def cleanHTML(content):
 count = 0
 
 
-@app.after_request
-def add_header(response):
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    return response
-
-
 @app.route("/")
 def index():
     loginName = session.get('sessionName')
     print(loginName)
     if 'sessionName' in session:
-        # print (session['sessionName'])
-        # countUsers = activeUsers.find({"name": session["sessionName"]}).count()
+        #print (session['sessionName'])
+        #countUsers = activeUsers.find({"name": session["sessionName"]}).count()
         countUsers = activeUsers.count_documents(
             {"name": session["sessionName"]})
         # print(countUsers)
@@ -162,15 +150,19 @@ def uploadImage():
 
 @app.route('/logout')
 def home():
-    print("logout   ")
+    print("logout")
     # activeUsers.delete_one({"name": session.get('sessionName')})
     session.pop('sessionName')
     return redirect('/')
+
+########## 404 PAGE ##########
 
 
 @app.errorhandler(404)  # Sets up custom 404 page!
 def pageNotFound(e):
     return render_template("404.html"), 404
+
+########## 500 PAGE ##########
 
 
 @app.errorhandler(500)  # Sets up custom 500 page!
@@ -179,7 +171,7 @@ def internalServerError(e):
 
 
 # when client go to "connected" give the username to the client that is connected on "connected"
-@socketio.on("connected")
+@socketio.on("connect")
 def connected():
     print("connected: ", session.get("sessionName"))
     emit("connected", session.get("sessionName"))
@@ -213,7 +205,7 @@ def handle_message(data):
 
 
 @socketio.on("disconnect")
-def disconnect():   
+def disconnect():
     print("disconnected: ", session.get("sessionName"))
     del users[session.get("sessionName")]
     activeUsers.delete_one({"name": session.get('sessionName')})
@@ -221,25 +213,6 @@ def disconnect():
     print(session.get("sessionName"))
     print(users)
 
-
-@app.errorhandler(CSRFError)
-def handle_csrf_error(e):
-    return render_template('csrf.html'), 400
-
-@socketio.on('make_post')
-def insertPost(data):
-    userPicture = ""
-    username = session.get('sessionName')
-    post = data.get('post')
-    temp = {
-            "post": post,
-            "user": [username, userPicture], 
-            "upvotes": {}, 
-            "downvotes": {}
-            }
-    posts[post_count[0]] = temp
-    post_count[0] += 1
-    emit('make_post', temp, broadcast=True)
 
 if __name__ == '__main__':
 
