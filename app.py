@@ -27,11 +27,12 @@ allowedImageExtensions = {'png', 'jpg', 'jpeg', 'gif'}
 socketio = SocketIO(app)
 
 users = {}
-
+usersMessages = {}
 post_count = [0]
-posts = {} 
-# {id: post:"", upvote:{username:username}, downvote:{username:username}} 
-# using dictionary for upvote/downvote for O(1) access of who has voted 
+posts = {}
+# {id: post:"", upvote:{username:username}, downvote:{username:username}}
+# using dictionary for upvote/downvote for O(1) access of who has voted
+
 
 def html(stuff):
     return '<html><body>' + stuff + '</body></html>'
@@ -179,6 +180,8 @@ def internalServerError(e):
 def connected():
     print("connected: ", session.get("sessionName"))
     emit("connected", session.get("sessionName"))
+    # use broadcast = true for broadcast to everyone
+    # emit("updateOnlineUsers", session.get("sessionName"))
 
 
 @socketio.on("user")
@@ -186,9 +189,8 @@ def connect_user(data):
     print("CONNECT USER DATA IS:", data)
     users[data] = request.sid
 
+
 # when it recieve message print it and send it back to all the client in js file with the bucket "message"
-
-
 @socketio.on('private_message')
 def handle_message(data):
 
@@ -217,17 +219,18 @@ def disconnect():
     print(session.get("sessionName"))
     print(users)
 
+
 @socketio.on('make_post')
 def insertPost(data):
     userPicture = ""
     username = session.get('sessionName')
     post = data.get('post')
     temp = {
-            "post": post,
-            "user": [username, userPicture], 
-            "upvotes": {}, 
-            "downvotes": {}
-            }
+        "post": post,
+        "user": [username, userPicture],
+        "upvotes": {},
+        "downvotes": {}
+    }
     posts[post_count[0]] = temp
     post_count[0] += 1
     emit('make_post', temp, broadcast=True)
