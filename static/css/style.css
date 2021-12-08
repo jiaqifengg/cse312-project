@@ -83,6 +83,7 @@ h2.sidebarTitle {
   background-color: rgb(246, 246, 246);
   border-radius: 10px;
   padding-bottom: 25px;
+  
 }
 
 .chatBoxes {
@@ -187,3 +188,7 @@ h2.sidebarTitle {
   color: black;
 }
 
+.chatContainer{
+  overflow-y: scroll;
+  height: 500px;
+}

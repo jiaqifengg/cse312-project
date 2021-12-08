@@ -232,8 +232,8 @@ def insertPost(data):
         "post-id": post_count[0],
         "post": post,
         "user": [username, userPicture],
-        "upvotes": {"test1":"test1", "test2":"test2"},
-        "downvotes": {"-1":"-1", "-2":"-2", "-3":"-3"}
+        "upvotes": {},
+        "downvotes": {}
     }
     posts[post_count[0]] = temp
     post_count[0] += 1
