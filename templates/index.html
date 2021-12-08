@@ -146,8 +146,22 @@
   <div class = "container">
     <center><h3 style = "padding: 5px">User Posts</h3></center>
     <div class = "chatContainer">
-      <ul class = "chatBoxes" id="postArea"> <!-- -->
-
+      <ul class = "chatBoxes" id="postArea"> 
+        <!-- -->
+        <div class="overall">
+          <li class="box">
+            <div class="chatProfile">
+              <img class="profileImageIcon" src='static\img\kitten.jpeg'>
+              <h6>username<h6>
+            </div>
+            <p class="message">post</p>
+          </li>
+          <div id="post_0" class="chatComponent" >
+            <button id="upButton">Upvote <span class="badge badge-primary badge-pill" id="upCounts"> 100 </span></button><br>
+            <button id="downButton">Downvote <span class="badge badge-primary badge-pill" id="downCounts"> 1 </span></button>
+          </div>
+        </div>
+        <br>
       </ul>
     </div>
       

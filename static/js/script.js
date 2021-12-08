@@ -69,21 +69,30 @@ $(document).ready(function () {
     var countUp = Object.keys(data["upvotes"]).length;
     var countDown = Object.keys(data["downvotes"]).length;
 
-    var overallDiv = '<div class="overall" id="post_' + String(post_id) + '> <li class="box">\
+    var overallDiv = '<div class="overall">\
                         <li class="box">\
                           <div class="chatProfile">\
-                            <img class="profileImageIcon" src=' + userImg + '>\
+                            <img class="profileImageIcon" src=' + String(userImg) + '>\
                             <h6>' + username + '<h6>\
                           </div>\
                           <p class="message">' + post + '</p>\
                         </li>\
-                        <div class="chatComponent">\
+                        <div class="chatComponent" id="post_' + String(post_id) + '">\
                           <button id="upButton">Upvote <span class="badge badge-primary badge-pill" id="upCounts">' + String(countUp) + '</span></button><br>\
-                          <button id="downButton">Upvote <span class="badge badge-primary badge-pill id="downCounts">' + String(countDown) + '</span></button>\
+                          <button id="downButton">Downvote <span class="badge badge-primary badge-pill" id="downCounts">' + String(countDown) + '</span></button>\
                         </div>\
-                      </div>\
-                      <br>'
+                    </div>\
+                    <br>'
     return overallDiv
   };
+
+  $("#upButton").on("click", function () {
+    var vote = 1
+    var id = $(this).parent().attr('id');
+    var post_id = id.split("_")[1];
+    console.log(id)
+    console.log(post_id);
+    socket.emit("vote", { vote: vote});
+  });
 
 });
