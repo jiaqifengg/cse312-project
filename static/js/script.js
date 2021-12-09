@@ -37,6 +37,15 @@ $(document).ready(function () {
     //console.log(msg)
   });
 
+  socket.on("getOldMessages", function (messages) {
+    for (i = 0; i < messages.length; i++) {
+      $("#middle-display")[0].innerHTML +=
+        '<p style="overflow-wrap: break-word; width: 100%;">' +
+        messages[i] +
+        "</p>";
+    }
+  });
+
   //click on the user you want to dm
   $(".user").click(function () {
     newUser = $(this).text();
@@ -44,6 +53,7 @@ $(document).ready(function () {
     if (currentUser != newUser) {
       document.getElementById("currentUser").innerHTML = newUser;
       document.getElementById("middle-display").innerHTML = "";
+      socket.emit("getOldMessages", newUser);
       //console.log(currentUser)
     }
     //console.log($(this).text());

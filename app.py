@@ -23,6 +23,7 @@ client = MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=
 database = client['rocketDatabase']
 userCollection = database['users']
 activeUsers = database['activeUsers']
+messages = {}
 
 # upload file setting
 profile_pic_path = 'static/profile-pic/'
@@ -250,10 +251,35 @@ def handle_message(data):
     # custom data
 
     sanitizedMessage = cleanHTML(data['msg'])
+
+    if name not in messages:
+        messageList = []
+        messageList.append(session.get("sessionName") + ":" + sanitizedMessage)
+        messages[name] = messageList
+    else:
+        messageList = messages[name]
+        messageList.append(session.get("sessionName") + ":" + sanitizedMessage)
+        messages[name] = messageList
+
+    if session.get("sessionName") not in messages:
+        messageList = []
+        messageList.append(session.get("sessionName") + ":" + sanitizedMessage)
+        messages[session.get("sessionName")] = messageList
+    else:
+        messageList = messages[session.get("sessionName")]
+        messageList.append(session.get("sessionName") + ":" + sanitizedMessage)
+        messages[session.get("sessionName")] = messageList
+    print("messages:", messages)
     emit('private_message', session.get("sessionName") +
          ":" + sanitizedMessage, room=sessionID)
     emit('curent_user_message', session.get("sessionName") +
          ":" + sanitizedMessage, room=currentUserSessionID)
+
+
+@socketio.on("getOldMessages")
+def getOldMessages(newUser):
+    if newUser in messages:
+        emit("getOldMessages", messages[newUser])
 
 
 @socketio.on("disconnect")
