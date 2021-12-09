@@ -9,6 +9,8 @@ from pymongo import MongoClient
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect, CSRFError
+import random 
+import string
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
@@ -22,8 +24,11 @@ database = client['rocketDatabase']
 userCollection = database['users']
 activeUsers = database['activeUsers']
 
-
+# upload file setting
+profile_pic_path = '/static/profile-pic'
+app.config['UPLOAD_FOLDER'] = profile_pic_path
 allowedImageExtensions = {'png', 'jpg', 'jpeg', 'gif'}
+
 socketio = SocketIO(app)
 
 users = {}
@@ -140,20 +145,20 @@ def login():
         return render_template("login.html")
 
 
-@app.route("/settings")
-def settings():
-    return render_template('settings.html')
-
-
 @app.route("/settings", methods=["POST", "GET"])
 def uploadImage():
     if request.method == "POST":
         if 'file' not in request.files:
-            return 'no file part'
-        imageFile = request.files['file']
-        test = imageFile.filename
-        print(imageFile)
+            string = "<h3 style = '"'color: red'"'>No file part!</h3>"
+            return 
+        profile_pic = request.files['profilePic']
+        # file name
+        profile_pic_name = session.get('sessionName')
+        
+        
 
+        print(profile_pic_name)
+    return render_template('settings.html')
 
 @app.route('/logout')
 def home():
@@ -161,6 +166,7 @@ def home():
     # activeUsers.delete_one({"name": session.get('sessionName')})
     session.pop('sessionName')
     return redirect('/')
+
 
 ########## 404 PAGE ##########
 

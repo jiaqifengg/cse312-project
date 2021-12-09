@@ -51,15 +51,48 @@ $(document).ready(function () {
   $("#send_post").on("click", function () {
     var post_msg = $("#postMessage").val();
     var from_user = $("#username_post").text();
-    console.log(post_msg);
-    console.log(from_user);
-    socket.emit("make_post", { post: post_msg, from: from_user });
+    socket.emit("create_post", { post: post_msg, from: from_user });
   });
 
   socket.on("make_post", function (data) {
-    for (const [key, value] of Object.entries(data)) {
-      console.log("Here!");
-      console.log(key, value);
-    }
+    console.log(Object.keys(data).length)
+    var overallDiv = html_post(data[Object.keys(data).length - 1]);
+    $("#postArea")[0].innerHTML += overallDiv;
   });
+
+  function html_post(data) {
+    var post_id = data["post-id"];
+    var post = data["post"];
+    var username = data["user"][0];
+    var userImg = data["user"][1];
+    var countUp = Object.keys(data["upvotes"]).length;
+    var countDown = Object.keys(data["downvotes"]).length;
+
+    var overallDiv = '<div class="overall">\
+                        <li class="box">\
+                          <div class="chatProfile">\
+                            <img class="profileImageIcon" src=' + String(userImg) + '>\
+                            <h6>' + username + '<h6>\
+                          </div>\
+                          <p class="message">' + post + '</p>\
+                        </li>\
+                        <div class="chatComponent" id="post_' + String(post_id) + '">\
+                          <button id="upButton" type="button">Upvote <span class="badge badge-primary badge-pill" id="upCounts">' + String(countUp) + '</span></button><br>\
+                          <button id="downButton" type="button">Downvote <span class="badge badge-primary badge-pill" id="downCounts">' + String(countDown) + '</span></button>\
+                        </div>\
+                    </div>\
+                    <br>'
+    return overallDiv
+  };
+
+  $("#upButton").on("click", function () {
+    console.log("upButton func")
+    var vote = 1
+    var id = $(this).parent().attr('id');
+    var post_id = id.split("_")[1];
+    console.log(id)
+    console.log(post_id);
+    socket.emit("vote", { vote: vote, post_id: post_id});
+  });
+
 });
