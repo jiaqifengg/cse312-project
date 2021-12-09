@@ -241,7 +241,16 @@ def insertPost(data):
 
 @socketio.on('vote')
 def changeVotes(data):
-    pass
+    username = session.get('sessionName')
+    vote_type = data["vote"]
+    post_id = data["post_id"]
+    post_data = posts.get(post_id)
+    votes = post_data[vote_type]
+    if username not in votes: # first time voting 
+        pass
+    else: # undo vote 
+        pass
+    emit('updateVote', post_data, broadcast=True)
 
 
 if __name__ == '__main__':

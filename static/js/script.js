@@ -1,3 +1,4 @@
+var voting;
 $(document).ready(function () {
   var socket = io("http://" + document.domain + ":" + location.port);
 
@@ -55,7 +56,7 @@ $(document).ready(function () {
   });
 
   socket.on("make_post", function (data) {
-    console.log(Object.keys(data).length)
+    // console.log(Object.keys(data).length)
     var overallDiv = html_post(data[Object.keys(data).length - 1]);
     $("#postArea")[0].innerHTML += overallDiv;
   });
@@ -77,22 +78,32 @@ $(document).ready(function () {
                           <p class="message">' + post + '</p>\
                         </li>\
                         <div class="chatComponent" id="post_' + String(post_id) + '">\
-                          <button id="upButton" type="button">Upvote <span class="badge badge-primary badge-pill" id="upCounts">' + String(countUp) + '</span></button><br>\
-                          <button id="downButton" type="button">Downvote <span class="badge badge-primary badge-pill" id="downCounts">' + String(countDown) + '</span></button>\
+                          <button id="upButton" type="button" onclick="voting(this);">Upvote <span class="badge badge-primary badge-pill" id="upCounts">' + String(countUp) + '</span></button><br>\
+                          <button id="downButton" type="button" onclick="voting(this);">Downvote <span class="badge badge-primary badge-pill" id="downCounts">' + String(countDown) + '</span></button>\
                         </div>\
                     </div>\
                     <br>'
     return overallDiv
   };
 
-  $("#upButton").on("click", function () {
+  voting = function(element) {
     console.log("upButton func")
-    var vote = 1
-    var id = $(this).parent().attr('id');
-    var post_id = id.split("_")[1];
-    console.log(id)
-    console.log(post_id);
+    var vote_type = $(element).attr('id');
+    var id = $(element).parent().attr('id');
+    var post_id = parseInt(id.split("_")[1]);
+    var vote = ""
+    if (vote_type == "upButton"){
+      var vote = "upvotes";
+    }else if (vote_type == "downButton"){
+      var vote = "downvotes";
+    }  
+    var data = {vote: vote, post_id:post_id}
+    console.log(data)
     socket.emit("vote", { vote: vote, post_id: post_id});
-  });
+  };
 
+  socket.on("updateVote", function(data){
+    console.log("updateVote");
+    console.log(data)
+  });
 });
