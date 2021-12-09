@@ -78,8 +78,8 @@ $(document).ready(function () {
                           <p class="message">' + post + '</p>\
                         </li>\
                         <div class="chatComponent" id="post_' + String(post_id) + '">\
-                          <button id="upButton" type="button" onclick="voting(this);">Upvote <span class="badge badge-primary badge-pill" id="upCounts">' + String(countUp) + '</span></button><br>\
-                          <button id="downButton" type="button" onclick="voting(this);">Downvote <span class="badge badge-primary badge-pill" id="downCounts">' + String(countDown) + '</span></button>\
+                          <button id="upButton" type="button" onclick="voting(this);">Upvote <span class="badge badge-primary badge-pill" id="upvotes_' + String(post_id) + '">' + String(countUp) + '</span></button><br>\
+                          <button id="downButton" type="button" onclick="voting(this);">Downvote <span class="badge badge-primary badge-pill" id="downvotes_' + String(post_id) + '">'+ String(countDown) + '</span></button>\
                         </div>\
                     </div>\
                     <br>'
@@ -99,11 +99,26 @@ $(document).ready(function () {
     }  
     var data = {vote: vote, post_id:post_id}
     console.log(data)
-    socket.emit("vote", { vote: vote, post_id: post_id});
+    socket.emit("vote", { vote: vote, post_id: post_id });
   };
 
   socket.on("updateVote", function(data){
     console.log("updateVote");
-    console.log(data)
+    console.log(post_data)
+    var post_data = data["post_data"];
+    
+    var post_id = post_data['post-id'];
+    var upvotes = post_data["upvotes"];
+    var downvotes = post_data["downvotes"];
+    var recount_upvotes = Object.keys(upvotes).length;
+    var recount_downvotes = Object.keys(downvotes).length;
+    console.log(post_id)
+    console.log(post_data)
+    console.log(recount_upvotes)
+    console.log(recount_downvotes)
+    var upvotes_id = "upvotes_" + String(post_id);
+    var downvotes_id = "downvotes_" + String(post_id)
+    document.getElementById(upvotes_id).innerHTML = recount_upvotes;
+    document.getElementById(downvotes_id).innerHTML = recount_downvotes;
   });
 });

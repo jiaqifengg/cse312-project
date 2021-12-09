@@ -248,12 +248,54 @@ def changeVotes(data):
     vote_type = data["vote"]
     post_id = data["post_id"]
     post_data = posts.get(post_id)
-    votes = post_data[vote_type]
-    if username not in votes: # first time voting 
-        pass
-    else: # undo vote 
-        pass
-    emit('updateVote', post_data, broadcast=True)
+    upvotes = post_data["upvotes"]
+    downvotes = post_data["downvotes"]
+    if "upvotes" == vote_type: # voting upvote 
+        if username not in upvotes: 
+            # user hasnt voted upvote yet
+            if username not in downvotes: 
+                # first time voting upvote
+                upvotes[username] = username # append user to upvotes
+                post_data["upvotes"] = upvotes # update upvotes dictionary in post_data
+                posts[post_id] = post_data # update posts with post_id and post_data
+            elif username in downvotes: 
+                # switching votes from downvote to upvote
+                del downvotes[username] # delete user from downvotes 
+                post_data["downvotes"] = downvotes
+                
+                upvotes[username] = username # append user to upvotes
+                post_data["upvotes"] = upvotes # update upvotes dictionary in post_data
+
+                posts[post_id] = post_data # update posts with post_id and post_data
+        elif username in upvotes: 
+            # undo upvote
+            del upvotes[username] # remove the user from upvotes
+            post_data["upvotes"] = upvotes # update post_data upvotes
+            posts[post_id] = post_data # update posts 
+    elif "downvotes" == vote_type: # voting downvote
+        if username not in downvotes: 
+            # user hasnt voted downvote yet
+            if username not in upvotes: 
+                # first time voting downvote
+                downvotes[username] = username
+                post_data["downvotes"] = downvotes
+                posts[post_id] = post_data
+            elif username in upvotes:
+                # switching votes from upvote to downvote
+                del upvotes[username]
+                post_data["upvotes"] = upvotes
+
+                downvotes[username] = username
+                post_data["downvotes"] = downvotes
+
+                posts[post_id] = post_data
+        elif username in downvotes:
+            # undo downvotes
+            del downvotes[username]
+            post_data["downvotes"] = downvotes
+            posts[post_id] = post_data
+    data = {"post_data":post_data, "vote_type": vote_type}
+    emit('updateVote', data, broadcast=True)
 
 
 if __name__ == '__main__':
