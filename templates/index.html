@@ -21,7 +21,8 @@
     integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
     crossorigin="anonymous"></script>
   <link rel="stylesheet" href="/static/css/style.css">
-
+  <script src="/static/js/jquery.js"></script>
+  <script src="/static/js/script.js"></script>
 
   <style>
     #left-side {
@@ -135,7 +136,7 @@
       <h4 style = "background-color: black; border-radius: 25px 25px 0 0; color: #7FFF00; border-bottom: 1px solid black; padding: 5px 10px 0px 10px">ONLINE USERS</h4>
       <div id="users">
         {% for user in users %}
-        <p class="user">{{user}}</p>
+        <img src="{{ user[1] }}" style="border-radius: 50%; width: 35px;">&#160; &#160; &#160;{{user[0]}}
         {% endfor %}
 
       </div>
@@ -157,8 +158,8 @@
             <p class="message">post</p>
           </li>
           <div id="post_-1" class="chatComponent">
-            <button id="upButton" type="button">Upvote <span class="badge badge-primary badge-pill" id="upCounts"> 100 </span></button><br>
-            <button id="downButton" type="button">Downvote <span class="badge badge-primary badge-pill" id="downCounts"> 1 </span></button>
+            <button id="upButton" type="button">Upvote <span class="badge badge-primary badge-pill" id="upvotes_-1"> 100 </span></button><br>
+            <button id="downButton" type="button">Downvote <span class="badge badge-primary badge-pill" id="downvotes_-1"> 1 </span></button>
           </div>
         </div>
         <br>
@@ -180,7 +181,6 @@
   <div id="right-side">
     <div id="top-userToDM">
       {% for user in users %}
-      <img src="{{ user[1] }}">
       <p id="currentUser">{{user[0]}}</p>
       {% endfor %}
     </div>
@@ -198,13 +198,6 @@
       </div>
     </div>
   </div>
-
-
-
-  <script src="/static/js/jquery.js"></script>
-  <script src="/static/js/script.js"></script>
-
-
 </body>
 
 </html>

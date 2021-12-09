@@ -70,6 +70,7 @@ def index():
             if(user["name"] != session.get("sessionName")):
                 _ = [user["name"], get_user_profile_pic_path(user["name"])]
                 allUsers.append(_)
+        print(allUsers)
         
         return render_template('index.html', user_image = get_user_profile_pic_path(loginName), users=allUsers)
     else:
@@ -192,17 +193,6 @@ def uploadImage():
     
     return render_template("settings.html", user_image = get_user_profile_pic_path(username))
     
-@app.route("/getProfilePic")
-def getProfilePic():
-    if session.get('sessionName'):
-        username = session.get('sessionName')
-        # find profile pic from database
-        user = userCollection.find_one({"name": username})
-        filename = user["profilePicName"]
-        return render_template("prorilePic_test.html", user_image = app.config['UPLOAD_FOLDER'] + filename)
-    
-    return html("<h3 style = '"'color: red'"'>Please register before you access this page.</h3>")
-# http://172.22.7.174:5000/getProfilePic
 
 
 @app.route('/logout')
@@ -272,18 +262,7 @@ def disconnect():
     print(session.get("sessionName"))
     print(users)
 
-         
-@app.route("/getProfilePic")
-def getProfilePic():
-    if session.get('sessionName'):
-        username = session.get('sessionName')
-        # find profile pic from database
-        user = userCollection.find_one({"name": username})
-        filename = user["profilePicName"]
-        return render_template("prorilePic_test.html", user_image = app.config['UPLOAD_FOLDER'] + filename)
-    
-    return html("<h3 style = '"'color: red'"'>Please register before you access this page.</h3>")
-# http://172.22.7.174:5000/getProfilePic
+
 
 
 @socketio.on('make_post')
