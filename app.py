@@ -266,13 +266,15 @@ def disconnect():
     print(users)
 
 
-@socketio.on('make_post')
+@socketio.on('create_post')
 def insertPost(data):
     userPicture = ""
     username = session.get('sessionName')
     post = data.get('post')
+    cleanedMessage = cleanHTML(post)
     temp = {
-        "post": post,
+        "post-id": post_count[0],
+        "post": cleanedMessage,
         "user": [username, userPicture],
         "upvotes": {},
         "downvotes": {}
