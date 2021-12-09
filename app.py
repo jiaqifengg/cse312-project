@@ -57,7 +57,7 @@ def index():
     print(loginName)
     if 'sessionName' in session:
         #print (session['sessionName'])
-        #countUsers = activeUsers.find({"name": session["sessionName"]}).count()
+        #countUsers = activeUsers.find({"name": sehttp://localhost:5000/ssion["sessionName"]}).count()
         countUsers = activeUsers.count_documents(
             {"name": session["sessionName"]})
         # print(countUsers)
@@ -68,8 +68,10 @@ def index():
         allUsers = []
         for user in allActiveUsers:
             if(user["name"] != session.get("sessionName")):
-                allUsers.append(user["name"])
-        return render_template('index.html', users=allUsers)
+                _ = [user["name"], get_user_profile_pic_path(user["name"])]
+                allUsers.append(_)
+        
+        return render_template('index.html', user_image = get_user_profile_pic_path(loginName), users=allUsers)
     else:
         return render_template('notLoggedIn.html')
 
@@ -146,8 +148,13 @@ def login():
 
 @app.route("/settings", methods=["POST", "GET"])
 def uploadImage():
-    if request.method == "POST":
+    if 'sessionName' in session:
         username = session.get('sessionName')
+
+    else:
+        return html("<h3 style = '"'color: red'"'>You don't have access for this page!</h3>")
+
+    if request.method == "POST":
 
         # cehck if the file is sent
         if 'file' not in request.files:
@@ -183,13 +190,8 @@ def uploadImage():
             string = "<h3 style = '"'color: red'"'>Our server only support png, jpg, jpeg, gif file.</h3>"
             return html(string)
     
-    return render_template("settings.html")
-
-        
-        
-        
-
-        
+    return render_template("settings.html", user_image = get_user_profile_pic_path(username))
+    
 @app.route("/getProfilePic")
 def getProfilePic():
     if session.get('sessionName'):
@@ -201,6 +203,7 @@ def getProfilePic():
     
     return html("<h3 style = '"'color: red'"'>Please register before you access this page.</h3>")
 # http://172.22.7.174:5000/getProfilePic
+
 
 @app.route('/logout')
 def home():
@@ -269,11 +272,24 @@ def disconnect():
     print(session.get("sessionName"))
     print(users)
 
+         
+@app.route("/getProfilePic")
+def getProfilePic():
+    if session.get('sessionName'):
+        username = session.get('sessionName')
+        # find profile pic from database
+        user = userCollection.find_one({"name": username})
+        filename = user["profilePicName"]
+        return render_template("prorilePic_test.html", user_image = app.config['UPLOAD_FOLDER'] + filename)
+    
+    return html("<h3 style = '"'color: red'"'>Please register before you access this page.</h3>")
+# http://172.22.7.174:5000/getProfilePic
+
 
 @socketio.on('make_post')
 def insertPost(data):
-    userPicture = ""
     username = session.get('sessionName')
+    userPicture = get_user_profile_pic_path(username)
     post = data.get('post')
     temp = {
         "post": post,
@@ -284,6 +300,11 @@ def insertPost(data):
     posts[post_count[0]] = temp
     post_count[0] += 1
     emit('make_post', temp, broadcast=True)
+
+def get_user_profile_pic_path(username):
+    user = userCollection.find_one({"name": username})
+    filename = user["profilePicName"]
+    return app.config['UPLOAD_FOLDER'] + filename
 
 
 if __name__ == '__main__':
