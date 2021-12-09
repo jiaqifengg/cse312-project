@@ -14,10 +14,12 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 
 app.config['SECRET_KEY'] = '5008cafee462ca7c310116be'
 csrf = CSRFProtect(app)
+
 # change this to whatever you use locally if you test locally
-client = MongoClient("mongo") 
+#client = MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 # KEEP FOR DOCKER ==>
-# client = MongoClient("mongo")  # for docker
+client = MongoClient("mongo") 
+
 database = client['rocketDatabase']
 userCollection = database['users']
 activeUsers = database['activeUsers']
@@ -228,9 +230,10 @@ def insertPost(data):
     userPicture = "/static/img/kitten.jpeg"
     username = session.get('sessionName')
     post = data.get('post')
+    cleanedMessage = cleanHTML(post)
     temp = {
         "post-id": post_count[0],
-        "post": post,
+        "post": cleanedMessage,
         "user": [username, userPicture],
         "upvotes": {},
         "downvotes": {}
@@ -254,7 +257,6 @@ def changeVotes(data):
 
 
 if __name__ == '__main__':
-
     # while using docker-compose, change debug to true if you want to test locally
     socketio.run(app, debug=False, port=5000, host="0.0.0.0")
     # app.run(debug=True)
