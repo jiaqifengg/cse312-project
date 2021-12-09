@@ -6,31 +6,32 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 import os
 import re
 from pymongo import MongoClient
-from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect, CSRFError
+import random 
+
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
 app.config['SECRET_KEY'] = '5008cafee462ca7c310116be'
 csrf = CSRFProtect(app)
-
 # change this to whatever you use locally if you test locally
-#client = MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
+client = MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false") 
 # KEEP FOR DOCKER ==>
-client = MongoClient("mongo") 
-
+# client = MongoClient("mongo")  # for docker
 database = client['rocketDatabase']
 userCollection = database['users']
 activeUsers = database['activeUsers']
 
+# upload file setting
+profile_pic_path = 'static/profile-pic/'
+app.config['UPLOAD_FOLDER'] = profile_pic_path
 
-allowedImageExtensions = {'png', 'jpg', 'jpeg', 'gif'}
 socketio = SocketIO(app)
 
 users = {}
 usersMessages = {}
-
 post_count = [0]
 posts = {}
 # {id: post:"", upvote:{username:username}, downvote:{username:username}}
@@ -111,7 +112,7 @@ def register():
             return html(string)
         else:
             newUser = userCollection.insert_one(
-                {"name": name, "password": hashedPassword})
+                {"name": name, "password": hashedPassword, "profilePicName": 'default-profile-pic.png'})
             return redirect("/login")
 
     return render_template("register.html")
@@ -143,20 +144,59 @@ def login():
         return render_template("login.html")
 
 
-@app.route("/settings")
-def settings():
-    return render_template('settings.html')
-
-
 @app.route("/settings", methods=["POST", "GET"])
 def uploadImage():
     if request.method == "POST":
-        if 'file' not in request.files:
-            return 'no file part'
-        imageFile = request.files['file']
-        test = imageFile.filename
-        print(imageFile)
+        username = session.get('sessionName')
 
+        # cehck if the file is sent
+        if 'file' not in request.files:
+            string = "<h3 style = '"'color: red'"'>No file part!</h3>"
+            return html(string)
+        
+        # check if there is file upload
+        file = request.files['file']
+        picName = file.filename
+        if picName == '':
+            string = "<h3 style = '"'color: red'"'>No selected file!</h3>"
+            return html(string)
+
+        # check file type
+        picType = picName.rsplit(".", 1)[1].lower()
+        ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+        if file and picType in ALLOWED_EXTENSIONS:
+
+            # make sure the name of the pic has different name
+            import string
+            picName = username + ''.join(random.choice(string.ascii_letters) for i in range(8)) + picName
+            picName = secure_filename(picName)
+
+            # store in to the server 
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], picName))
+
+            # update the path
+            myquery = {"name": username}
+            newValues = { "$set": {"profilePicName": picName}}
+            userCollection.update_one(myquery, newValues)
+
+        else:
+            string = "<h3 style = '"'color: red'"'>Our server only support png, jpg, jpeg, gif file.</h3>"
+            return html(string)
+    
+    return render_template("settings.html")
+
+         
+@app.route("/getProfilePic")
+def getProfilePic():
+    if session.get('sessionName'):
+        username = session.get('sessionName')
+        # find profile pic from database
+        user = userCollection.find_one({"name": username})
+        filename = user["profilePicName"]
+        return render_template("prorilePic_test.html", user_image = app.config['UPLOAD_FOLDER'] + filename)
+    
+    return html("<h3 style = '"'color: red'"'>Please register before you access this page.</h3>")
+# http://172.22.7.174:5000/getProfilePic
 
 @app.route('/logout')
 def home():
@@ -164,6 +204,7 @@ def home():
     # activeUsers.delete_one({"name": session.get('sessionName')})
     session.pop('sessionName')
     return redirect('/')
+
 
 ########## 404 PAGE ##########
 
@@ -225,15 +266,13 @@ def disconnect():
     print(users)
 
 
-@socketio.on('create_post')
+@socketio.on('make_post')
 def insertPost(data):
-    userPicture = "/static/img/kitten.jpeg"
+    userPicture = ""
     username = session.get('sessionName')
     post = data.get('post')
-    cleanedMessage = cleanHTML(post)
     temp = {
-        "post-id": post_count[0],
-        "post": cleanedMessage,
+        "post": post,
         "user": [username, userPicture],
         "upvotes": {},
         "downvotes": {}
@@ -298,7 +337,9 @@ def changeVotes(data):
     emit('updateVote', data, broadcast=True)
 
 
+
 if __name__ == '__main__':
+
     # while using docker-compose, change debug to true if you want to test locally
     socketio.run(app, debug=False, port=5000, host="0.0.0.0")
     # app.run(debug=True)

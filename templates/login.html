@@ -31,7 +31,7 @@
 
         <h3 style = "margin-left: 30%; margin-right: 30%; width: 40%">Login here!</h3>
         <form method = "post" style = "margin-top: 15px; margin-left: 30%; margin-right: 30%; width: 40%" class = "form-register">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <label for="loginName" class = "sr-only">Name</label>
             <input type="name" name="loginName" id="loginName" placeholder="Enter name" class="form-control" required/>
         
