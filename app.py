@@ -23,6 +23,7 @@ client = MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=
 database = client['rocketDatabase']
 userCollection = database['users']
 activeUsers = database['activeUsers']
+messages = {}
 
 # upload file setting
 profile_pic_path = 'static/profile-pic/'
@@ -190,8 +191,8 @@ def uploadImage():
         else:
             string = "<h3 style = '"'color: red'"'>Our server only support png, jpg, jpeg, gif file.</h3>"
             return html(string)
-    
     return render_template("settings.html", user_image = get_user_profile_pic_path(username))
+
     
 
 
@@ -247,10 +248,35 @@ def handle_message(data):
     # custom data
 
     sanitizedMessage = cleanHTML(data['msg'])
+
+    if name not in messages:
+        messageList = []
+        messageList.append(session.get("sessionName") + ":" + sanitizedMessage)
+        messages[name] = messageList
+    else:
+        messageList = messages[name]
+        messageList.append(session.get("sessionName") + ":" + sanitizedMessage)
+        messages[name] = messageList
+
+    if session.get("sessionName") not in messages:
+        messageList = []
+        messageList.append(session.get("sessionName") + ":" + sanitizedMessage)
+        messages[session.get("sessionName")] = messageList
+    else:
+        messageList = messages[session.get("sessionName")]
+        messageList.append(session.get("sessionName") + ":" + sanitizedMessage)
+        messages[session.get("sessionName")] = messageList
+    print("messages:", messages)
     emit('private_message', session.get("sessionName") +
          ":" + sanitizedMessage, room=sessionID)
     emit('curent_user_message', session.get("sessionName") +
          ":" + sanitizedMessage, room=currentUserSessionID)
+
+
+@socketio.on("getOldMessages")
+def getOldMessages(newUser):
+    if newUser in messages:
+        emit("getOldMessages", messages[newUser])
 
 
 @socketio.on("disconnect")
@@ -263,22 +289,78 @@ def disconnect():
     print(users)
 
 
-
-
-@socketio.on('make_post')
+@socketio.on('create_post')
 def insertPost(data):
     username = session.get('sessionName')
     userPicture = get_user_profile_pic_path(username)
     post = data.get('post')
+    cleanedMessage = cleanHTML(post)
     temp = {
-        "post": post,
+        "post-id": post_count[0],
+        "post": cleanedMessage,
         "user": [username, userPicture],
         "upvotes": {},
         "downvotes": {}
     }
     posts[post_count[0]] = temp
     post_count[0] += 1
-    emit('make_post', temp, broadcast=True)
+    emit('make_post', posts, broadcast=True)
+
+@socketio.on('vote')
+def changeVotes(data):
+    username = session.get('sessionName')
+    vote_type = data["vote"]
+    post_id = data["post_id"]
+    post_data = posts.get(post_id)
+    upvotes = post_data["upvotes"]
+    downvotes = post_data["downvotes"]
+    if "upvotes" == vote_type: # voting upvote 
+        if username not in upvotes: 
+            # user hasnt voted upvote yet
+            if username not in downvotes: 
+                # first time voting upvote
+                upvotes[username] = username # append user to upvotes
+                post_data["upvotes"] = upvotes # update upvotes dictionary in post_data
+                posts[post_id] = post_data # update posts with post_id and post_data
+            elif username in downvotes: 
+                # switching votes from downvote to upvote
+                del downvotes[username] # delete user from downvotes 
+                post_data["downvotes"] = downvotes
+                
+                upvotes[username] = username # append user to upvotes
+                post_data["upvotes"] = upvotes # update upvotes dictionary in post_data
+
+                posts[post_id] = post_data # update posts with post_id and post_data
+        elif username in upvotes: 
+            # undo upvote
+            del upvotes[username] # remove the user from upvotes
+            post_data["upvotes"] = upvotes # update post_data upvotes
+            posts[post_id] = post_data # update posts 
+    elif "downvotes" == vote_type: # voting downvote
+        if username not in downvotes: 
+            # user hasnt voted downvote yet
+            if username not in upvotes: 
+                # first time voting downvote
+                downvotes[username] = username
+                post_data["downvotes"] = downvotes
+                posts[post_id] = post_data
+            elif username in upvotes:
+                # switching votes from upvote to downvote
+                del upvotes[username]
+                post_data["upvotes"] = upvotes
+
+                downvotes[username] = username
+                post_data["downvotes"] = downvotes
+
+                posts[post_id] = post_data
+        elif username in downvotes:
+            # undo downvotes
+            del downvotes[username]
+            post_data["downvotes"] = downvotes
+            posts[post_id] = post_data
+    data = {"post_data":post_data, "vote_type": vote_type}
+    emit('updateVote', data, broadcast=True)
+
 
 def get_user_profile_pic_path(username):
     user = userCollection.find_one({"name": username})
