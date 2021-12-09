@@ -9,7 +9,7 @@ from pymongo import MongoClient
 from werkzeug.utils import secure_filename, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect, CSRFError
-import random 
+import random
 
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -17,13 +17,14 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = '5008cafee462ca7c310116be'
 csrf = CSRFProtect(app)
 # change this to whatever you use locally if you test locally
-client = MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false") 
+client = MongoClient(
+    "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 # KEEP FOR DOCKER ==>
 # client = MongoClient("mongo")  # for docker
 database = client['rocketDatabase']
 userCollection = database['users']
 activeUsers = database['activeUsers']
-messages = {}
+
 
 # upload file setting
 profile_pic_path = 'static/profile-pic/'
@@ -32,7 +33,7 @@ app.config['UPLOAD_FOLDER'] = profile_pic_path
 socketio = SocketIO(app)
 
 users = {}
-usersMessages = {}
+
 post_count = [0]
 posts = {}
 # {id: post:"", upvote:{username:username}, downvote:{username:username}}
@@ -48,9 +49,12 @@ def cleanHTML(content):
 
 
 count = 0
+
+
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
     return render_template('csrf.html'), 400
+
 
 @app.route("/")
 def index():
@@ -58,7 +62,7 @@ def index():
     print(loginName)
     if 'sessionName' in session:
         #print (session['sessionName'])
-        #countUsers = activeUsers.find({"name": sehttp://localhost:5000/ssion["sessionName"]}).count()
+        # countUsers = activeUsers.find({"name": sehttp://localhost:5000/ssion["sessionName"]}).count()
         countUsers = activeUsers.count_documents(
             {"name": session["sessionName"]})
         # print(countUsers)
@@ -72,8 +76,8 @@ def index():
                 _ = [user["name"], get_user_profile_pic_path(user["name"])]
                 allUsers.append(_)
         print(allUsers)
-        
-        return render_template('index.html', user_image = get_user_profile_pic_path(loginName), users=allUsers)
+
+        return render_template('index.html', user_image=get_user_profile_pic_path(loginName), users=allUsers)
     else:
         return render_template('notLoggedIn.html')
 
@@ -162,7 +166,7 @@ def uploadImage():
         if 'file' not in request.files:
             string = "<h3 style = '"'color: red'"'>No file part!</h3>"
             return html(string)
-        
+
         # check if there is file upload
         file = request.files['file']
         picName = file.filename
@@ -177,23 +181,23 @@ def uploadImage():
 
             # make sure the name of the pic has different name
             import string
-            picName = username + ''.join(random.choice(string.ascii_letters) for i in range(8)) + picName
+            picName = username + \
+                ''.join(random.choice(string.ascii_letters)
+                        for i in range(8)) + picName
             picName = secure_filename(picName)
 
-            # store in to the server 
+            # store in to the server
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], picName))
 
             # update the path
             myquery = {"name": username}
-            newValues = { "$set": {"profilePicName": picName}}
+            newValues = {"$set": {"profilePicName": picName}}
             userCollection.update_one(myquery, newValues)
 
         else:
             string = "<h3 style = '"'color: red'"'>Our server only support png, jpg, jpeg, gif file.</h3>"
             return html(string)
-    return render_template("settings.html", user_image = get_user_profile_pic_path(username))
-
-    
+    return render_template("settings.html", user_image=get_user_profile_pic_path(username))
 
 
 @app.route('/logout')
@@ -249,34 +253,10 @@ def handle_message(data):
 
     sanitizedMessage = cleanHTML(data['msg'])
 
-    if name not in messages:
-        messageList = []
-        messageList.append(session.get("sessionName") + ":" + sanitizedMessage)
-        messages[name] = messageList
-    else:
-        messageList = messages[name]
-        messageList.append(session.get("sessionName") + ":" + sanitizedMessage)
-        messages[name] = messageList
-
-    if session.get("sessionName") not in messages:
-        messageList = []
-        messageList.append(session.get("sessionName") + ":" + sanitizedMessage)
-        messages[session.get("sessionName")] = messageList
-    else:
-        messageList = messages[session.get("sessionName")]
-        messageList.append(session.get("sessionName") + ":" + sanitizedMessage)
-        messages[session.get("sessionName")] = messageList
-    print("messages:", messages)
     emit('private_message', session.get("sessionName") +
          ":" + sanitizedMessage, room=sessionID)
     emit('curent_user_message', session.get("sessionName") +
          ":" + sanitizedMessage, room=currentUserSessionID)
-
-
-@socketio.on("getOldMessages")
-def getOldMessages(newUser):
-    if newUser in messages:
-        emit("getOldMessages", messages[newUser])
 
 
 @socketio.on("disconnect")
@@ -306,6 +286,7 @@ def insertPost(data):
     post_count[0] += 1
     emit('make_post', posts, broadcast=True)
 
+
 @socketio.on('vote')
 def changeVotes(data):
     username = session.get('sessionName')
@@ -314,32 +295,36 @@ def changeVotes(data):
     post_data = posts.get(post_id)
     upvotes = post_data["upvotes"]
     downvotes = post_data["downvotes"]
-    if "upvotes" == vote_type: # voting upvote 
-        if username not in upvotes: 
+    if "upvotes" == vote_type:  # voting upvote
+        if username not in upvotes:
             # user hasnt voted upvote yet
-            if username not in downvotes: 
+            if username not in downvotes:
                 # first time voting upvote
-                upvotes[username] = username # append user to upvotes
-                post_data["upvotes"] = upvotes # update upvotes dictionary in post_data
-                posts[post_id] = post_data # update posts with post_id and post_data
-            elif username in downvotes: 
+                upvotes[username] = username  # append user to upvotes
+                # update upvotes dictionary in post_data
+                post_data["upvotes"] = upvotes
+                # update posts with post_id and post_data
+                posts[post_id] = post_data
+            elif username in downvotes:
                 # switching votes from downvote to upvote
-                del downvotes[username] # delete user from downvotes 
+                del downvotes[username]  # delete user from downvotes
                 post_data["downvotes"] = downvotes
-                
-                upvotes[username] = username # append user to upvotes
-                post_data["upvotes"] = upvotes # update upvotes dictionary in post_data
 
-                posts[post_id] = post_data # update posts with post_id and post_data
-        elif username in upvotes: 
+                upvotes[username] = username  # append user to upvotes
+                # update upvotes dictionary in post_data
+                post_data["upvotes"] = upvotes
+
+                # update posts with post_id and post_data
+                posts[post_id] = post_data
+        elif username in upvotes:
             # undo upvote
-            del upvotes[username] # remove the user from upvotes
-            post_data["upvotes"] = upvotes # update post_data upvotes
-            posts[post_id] = post_data # update posts 
-    elif "downvotes" == vote_type: # voting downvote
-        if username not in downvotes: 
+            del upvotes[username]  # remove the user from upvotes
+            post_data["upvotes"] = upvotes  # update post_data upvotes
+            posts[post_id] = post_data  # update posts
+    elif "downvotes" == vote_type:  # voting downvote
+        if username not in downvotes:
             # user hasnt voted downvote yet
-            if username not in upvotes: 
+            if username not in upvotes:
                 # first time voting downvote
                 downvotes[username] = username
                 post_data["downvotes"] = downvotes
@@ -358,7 +343,7 @@ def changeVotes(data):
             del downvotes[username]
             post_data["downvotes"] = downvotes
             posts[post_id] = post_data
-    data = {"post_data":post_data, "vote_type": vote_type}
+    data = {"post_data": post_data, "vote_type": vote_type}
     emit('updateVote', data, broadcast=True)
 
 
