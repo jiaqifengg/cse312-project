@@ -181,10 +181,11 @@ def uploadImage():
 
             # make sure the name of the pic has different name
             import string
-            picName = username + \
-                ''.join(random.choice(string.ascii_letters)
-                        for i in range(8)) + picName
+            picName = picName.replace("&", "amp").replace("<", "lt").replace(">", "gt").replace(".", "gt")
+            picName = username + ''.join(random.choice(string.ascii_letters)for i in range(8)) + picName
             picName = secure_filename(picName)
+
+            picName = app.config['UPLOAD_FOLDER'], picName
 
             # store in to the server
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], picName))
@@ -351,6 +352,8 @@ def get_user_profile_pic_path(username):
     user = userCollection.find_one({"name": username})
     filename = user["profilePicName"]
     return app.config['UPLOAD_FOLDER'] + filename
+
+
 
 
 if __name__ == '__main__':
