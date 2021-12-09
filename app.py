@@ -6,11 +6,11 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 import os
 import re
 from pymongo import MongoClient
-from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect, CSRFError
 import random 
-import string
+
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
@@ -25,9 +25,8 @@ userCollection = database['users']
 activeUsers = database['activeUsers']
 
 # upload file setting
-profile_pic_path = '/static/profile-pic'
+profile_pic_path = 'static/profile-pic/'
 app.config['UPLOAD_FOLDER'] = profile_pic_path
-allowedImageExtensions = {'png', 'jpg', 'jpeg', 'gif'}
 
 socketio = SocketIO(app)
 
@@ -113,7 +112,7 @@ def register():
             return html(string)
         else:
             newUser = userCollection.insert_one(
-                {"name": name, "password": hashedPassword})
+                {"name": name, "password": hashedPassword, "profilePicName": 'default-profile-pic.png'})
             return redirect("/login")
 
     return render_template("register.html")
@@ -148,17 +147,60 @@ def login():
 @app.route("/settings", methods=["POST", "GET"])
 def uploadImage():
     if request.method == "POST":
+        username = session.get('sessionName')
+
+        # cehck if the file is sent
         if 'file' not in request.files:
             string = "<h3 style = '"'color: red'"'>No file part!</h3>"
-            return 
-        profile_pic = request.files['profilePic']
-        # file name
-        profile_pic_name = session.get('sessionName')
+            return html(string)
+        
+        # check if there is file upload
+        file = request.files['file']
+        picName = file.filename
+        if picName == '':
+            string = "<h3 style = '"'color: red'"'>No selected file!</h3>"
+            return html(string)
+
+        # check file type
+        picType = picName.rsplit(".", 1)[1].lower()
+        ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+        if file and picType in ALLOWED_EXTENSIONS:
+
+            # make sure the name of the pic has different name
+            import string
+            picName = username + ''.join(random.choice(string.ascii_letters) for i in range(8)) + picName
+            picName = secure_filename(picName)
+
+            # store in to the server 
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], picName))
+
+            # update the path
+            myquery = {"name": username}
+            newValues = { "$set": {"profilePicName": picName}}
+            userCollection.update_one(myquery, newValues)
+
+        else:
+            string = "<h3 style = '"'color: red'"'>Our server only support png, jpg, jpeg, gif file.</h3>"
+            return html(string)
+    
+    return render_template("settings.html")
+
+        
         
         
 
-        print(profile_pic_name)
-    return render_template('settings.html')
+        
+@app.route("/getProfilePic")
+def getProfilePic():
+    if session.get('sessionName'):
+        username = session.get('sessionName')
+        # find profile pic from database
+        user = userCollection.find_one({"name": username})
+        filename = user["profilePicName"]
+        return render_template("prorilePic_test.html", user_image = app.config['UPLOAD_FOLDER'] + filename)
+    
+    return html("<h3 style = '"'color: red'"'>Please register before you access this page.</h3>")
+# http://172.22.7.174:5000/getProfilePic
 
 @app.route('/logout')
 def home():
