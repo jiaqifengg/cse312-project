@@ -75,58 +75,6 @@
     </ul>
   </nav>
 
-<!-- 
-  <div style = "margin-left: 25px;">
-  <h1>Welcome {{ session.sessionName }} !</h1>
-
-  <div id="left-side">
-    <div id = "sidebar">
-      <h2 class = "sidebarTitle">ONLINE USERS</h2>
-      <nav style = "margin: 0" class = "row">
-    
-      {% for user in users %}
-      <div class = "userBoxes"> -->
-        <!-- ADD IMAGE PROFILE HERE-->
-        <!-- <center>
-        <div class = "profile">
-          <img src = "">
-        </div>
-        <br>
-        <b><p class="user">{{user}}</p></b>
-        </center>
-      </div>
-
-    {% endfor %}
-      </nav>
-    </div>
-  </div>
-  <br>
-  <div id="right-side">
-    <div id="top">
-      <div id="display">
-      </div>
-    </div>
-    <div id="bottom">
-      <div id="input">
-        <p1>To:</p1>
-        <input type="text" id="toUser">
-        <p1>Message</p1>
-        <input type="text" id="myMessage">
-        <button type="button" id="send">Send</button>
-      </div>
-    </div>
-  </div>
-
-  </div>
-
-  <script type="text/javascript">
-    const username = `{{username}}`;
-  </script>
-
-
-  <script src="/static/js/jquery.js"></script>
-  <script src="/static/js/script.js"></script> -->
-
 
   <br>
   <!-- <h1>Welcome {{ session.sessionName }} !</h1> -->
@@ -134,12 +82,12 @@
   <div style = "margin-left: 25px"id="left-side">
     <navid="sidebar">
       <h4 style = "background-color: black; border-radius: 25px 25px 0 0; color: #7FFF00; border-bottom: 1px solid black; padding: 5px 10px 0px 10px">ONLINE USERS</h4>
-      <div id="users">
+      <ul id="users">
         {% for user in users %}
-        <p class="user">{{user}}</p>
+        <li>{{user}}</li>
         {% endfor %}
 
-      </div>
+      </ul>
     </nav>
   </div>
 

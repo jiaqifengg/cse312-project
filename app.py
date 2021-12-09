@@ -16,9 +16,10 @@ app.config['SECRET_KEY'] = '5008cafee462ca7c310116be'
 csrf = CSRFProtect(app)
 
 # change this to whatever you use locally if you test locally
-#client = MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
+client = MongoClient(
+    "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 # KEEP FOR DOCKER ==>
-client = MongoClient("mongo") 
+# client = MongoClient("mongo")
 
 database = client['rocketDatabase']
 userCollection = database['users']
@@ -46,9 +47,12 @@ def cleanHTML(content):
 
 
 count = 0
+
+
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
     return render_template('csrf.html'), 400
+
 
 @app.route("/")
 def index():
@@ -62,12 +66,12 @@ def index():
         # print(countUsers)
         if countUsers < 1:
             activeUsers.insert_one({"name": session['sessionName']})
-
         allActiveUsers = activeUsers.find({"name": {"$exists": True}})
         allUsers = []
         for user in allActiveUsers:
             if(user["name"] != session.get("sessionName")):
                 allUsers.append(user["name"])
+
         return render_template('index.html', users=allUsers)
     else:
         return render_template('notLoggedIn.html')
@@ -185,6 +189,8 @@ def internalServerError(e):
 def connected():
     print("connected: ", session.get("sessionName"))
     emit("connected", session.get("sessionName"))
+
+    # socketio.emit("updateOnlineUsers", "data")
     # use broadcast = true for broadcast to everyone
     # emit("updateOnlineUsers", session.get("sessionName"))
 
@@ -198,8 +204,10 @@ def connect_user(data):
 # when it recieve message print it and send it back to all the client in js file with the bucket "message"
 @socketio.on('private_message')
 def handle_message(data):
-
+    print(users)
+    print(session.get("sessionName"))
     name = data.get('To')
+    print(name)
     if name not in users or name == session.get("sessionName"):
         emit('private_message', 'Error, name doesn\'t exist!')
         return 'error'
@@ -221,8 +229,8 @@ def disconnect():
     del users[session.get("sessionName")]
     activeUsers.delete_one({"name": session.get('sessionName')})
     session.pop('sessionName')
-    print(session.get("sessionName"))
-    print(users)
+    print("disconnect:", session.get("sessionName"))
+    print("disconnect:", users)
 
 
 @socketio.on('create_post')
@@ -242,6 +250,7 @@ def insertPost(data):
     post_count[0] += 1
     emit('make_post', posts, broadcast=True)
 
+
 @socketio.on('vote')
 def changeVotes(data):
     username = session.get('sessionName')
@@ -250,32 +259,36 @@ def changeVotes(data):
     post_data = posts.get(post_id)
     upvotes = post_data["upvotes"]
     downvotes = post_data["downvotes"]
-    if "upvotes" == vote_type: # voting upvote 
-        if username not in upvotes: 
+    if "upvotes" == vote_type:  # voting upvote
+        if username not in upvotes:
             # user hasnt voted upvote yet
-            if username not in downvotes: 
+            if username not in downvotes:
                 # first time voting upvote
-                upvotes[username] = username # append user to upvotes
-                post_data["upvotes"] = upvotes # update upvotes dictionary in post_data
-                posts[post_id] = post_data # update posts with post_id and post_data
-            elif username in downvotes: 
+                upvotes[username] = username  # append user to upvotes
+                # update upvotes dictionary in post_data
+                post_data["upvotes"] = upvotes
+                # update posts with post_id and post_data
+                posts[post_id] = post_data
+            elif username in downvotes:
                 # switching votes from downvote to upvote
-                del downvotes[username] # delete user from downvotes 
+                del downvotes[username]  # delete user from downvotes
                 post_data["downvotes"] = downvotes
-                
-                upvotes[username] = username # append user to upvotes
-                post_data["upvotes"] = upvotes # update upvotes dictionary in post_data
 
-                posts[post_id] = post_data # update posts with post_id and post_data
-        elif username in upvotes: 
+                upvotes[username] = username  # append user to upvotes
+                # update upvotes dictionary in post_data
+                post_data["upvotes"] = upvotes
+
+                # update posts with post_id and post_data
+                posts[post_id] = post_data
+        elif username in upvotes:
             # undo upvote
-            del upvotes[username] # remove the user from upvotes
-            post_data["upvotes"] = upvotes # update post_data upvotes
-            posts[post_id] = post_data # update posts 
-    elif "downvotes" == vote_type: # voting downvote
-        if username not in downvotes: 
+            del upvotes[username]  # remove the user from upvotes
+            post_data["upvotes"] = upvotes  # update post_data upvotes
+            posts[post_id] = post_data  # update posts
+    elif "downvotes" == vote_type:  # voting downvote
+        if username not in downvotes:
             # user hasnt voted downvote yet
-            if username not in upvotes: 
+            if username not in upvotes:
                 # first time voting downvote
                 downvotes[username] = username
                 post_data["downvotes"] = downvotes
@@ -294,7 +307,7 @@ def changeVotes(data):
             del downvotes[username]
             post_data["downvotes"] = downvotes
             posts[post_id] = post_data
-    data = {"post_data":post_data, "vote_type": vote_type}
+    data = {"post_data": post_data, "vote_type": vote_type}
     emit('updateVote', data, broadcast=True)
 
 
