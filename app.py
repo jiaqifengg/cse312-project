@@ -1,8 +1,5 @@
 from flask import Flask, render_template, json, url_for, redirect, request, session
 from flask_socketio import SocketIO, emit, join_room, leave_room
-#from flask_login import current_user, login_user, logout_user, login_required
-#from flask_pymongo import PyMongo
-#import pymongo
 import os
 import re
 from pymongo import MongoClient
@@ -17,14 +14,12 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = '5008cafee462ca7c310116be'
 csrf = CSRFProtect(app)
 # change this to whatever you use locally if you test locally
-#client = MongoClient(
-#   "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
+#client = MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 # KEEP FOR DOCKER ==>
 client = MongoClient("mongo")  # for docker
 database = client['rocketDatabase']
 userCollection = database['users']
 activeUsers = database['activeUsers']
-
 
 # upload file setting
 profile_pic_path = 'static/profile-pic/'
@@ -38,7 +33,6 @@ post_count = [0]
 posts = {}
 # {id: post:"", upvote:{username:username}, downvote:{username:username}}
 # using dictionary for upvote/downvote for O(1) access of who has voted
-
 
 def html(stuff):
     return '<html><body>' + stuff + '</body></html>'
@@ -80,12 +74,6 @@ def index():
         return render_template('index.html', user_image=get_user_profile_pic_path(loginName), users=allUsers)
     else:
         return render_template('notLoggedIn.html')
-
-
-@app.route("/members")
-def members():
-    return render_template("members.html")
-
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
@@ -209,7 +197,6 @@ def home():
     session.pop('sessionName')
     return redirect('/')
 
-
 ########## 404 PAGE ##########
 @app.errorhandler(404)  # Sets up custom 404 page!
 def pageNotFound(e):
@@ -219,7 +206,6 @@ def pageNotFound(e):
 @app.errorhandler(500)  # Sets up custom 500 page!
 def internalServerError(e):
     return render_template("500.html"), 500
-
 
 # when client go to "connected" give the username to the client that is connected on "connected"
 @socketio.on("connect")
@@ -238,7 +224,6 @@ def connect_user(data):
 
 allPrivateMessages = {}
 # when it recieve message print it and send it back to all the client in js file with the bucket "message"
-
 
 @socketio.on('private_message')
 def handle_message(data):
@@ -402,7 +387,6 @@ def get_user_profile_pic_path(username):
 
 
 if __name__ == '__main__':
-
     # while using docker-compose, change debug to true if you want to test locally
     socketio.run(app, debug=False, port=5000, host="0.0.0.0")
     # app.run(debug=True)
