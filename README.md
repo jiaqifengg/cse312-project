@@ -1,4 +1,4 @@
-# Team Sigma Polling Project
+# Team Sigma Chat Project
 
 We are creating a chat webapp using Python3 websockets. This will incorporate multithreading, database usage, along with a server sided and client sided script. This will be setup using Docker
 
