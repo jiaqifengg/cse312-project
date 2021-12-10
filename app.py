@@ -239,6 +239,7 @@ def connect_user(data):
     users[data] = request.sid
 
 
+allPrivateMessages = []
 # when it recieve message print it and send it back to all the client in js file with the bucket "message"
 @socketio.on('private_message')
 def handle_message(data):
@@ -258,6 +259,25 @@ def handle_message(data):
          ":" + sanitizedMessage, room=sessionID)
     emit('curent_user_message', session.get("sessionName") +
          ":" + sanitizedMessage, room=currentUserSessionID)
+
+    #print("########################")
+    username = session.get("sessionName")
+    #print("current USER:", username)
+
+    message = data['msg']
+    #print("message:", message)
+
+    toUser = data['To']
+
+    dict = {}
+    username = str(username)
+    dict[username] = {}
+    dict[username]['msg'] = message
+    dict[username]['To'] = toUser
+
+    allPrivateMessages.append(dict)
+
+    print(allPrivateMessages)
 
 
 @socketio.on("disconnect")
