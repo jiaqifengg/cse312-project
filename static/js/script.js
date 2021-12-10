@@ -15,6 +15,7 @@ $(document).ready(function () {
   $("#send").on("click", function () {
     var message = $("#myMessage").val();
     var toUser = $("#currentUser").text();
+    console.log(toUser);
     socket.emit("private_message", {
       msg: message,
       To: toUser,
@@ -22,12 +23,16 @@ $(document).ready(function () {
   });
 
   //display incoming messages
-  socket.on("private_message", function (msg) {
-    $("#middle-display")[0].innerHTML +=
-      '<p style="overflow-wrap: break-word; width: 100%;">' + msg + "</p>";
-
+  socket.on("private_message", function (data) {
+    currentUser = $("#currentUser").text();
+    if (data["toUser"] == currentUser) {
+      $("#middle-display")[0].innerHTML +=
+        '<p style="overflow-wrap: break-word; width: 100%;">' +
+        data["msg"] +
+        "</p>";
+    }
     //console.log(msg)
-    // alert(msg)
+    alert(data["msg"]);
   });
   //display message sent as well
   socket.on("curent_user_message", function (msg) {
@@ -37,6 +42,15 @@ $(document).ready(function () {
     //console.log(msg)
   });
 
+  socket.on("getOldMessages", function (messages) {
+    $("#middle-display")[0].innerHTML = "";
+    for (i = 0; i < messages.length; i++) {
+      $("#middle-display")[0].innerHTML +=
+        '<p style="overflow-wrap: break-word; width: 100%;">' +
+        messages[i] +
+        "</p>";
+    }
+  });
   //click on the user you want to dm
   $(".user").click(function () {
     newUser = $(this).text();

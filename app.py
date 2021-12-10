@@ -181,8 +181,11 @@ def uploadImage():
 
             # make sure the name of the pic has different name
             import string
-            picName = picName.replace("&", "amp").replace("<", "lt").replace(">", "gt").replace(".", "gt")
-            picName = username + ''.join(random.choice(string.ascii_letters)for i in range(8)) + picName
+            picName = picName.replace("&", "amp").replace(
+                "<", "lt").replace(">", "gt").replace(".", "gt")
+            picName = username + \
+                ''.join(random.choice(string.ascii_letters)
+                        for i in range(8)) + picName
             picName = secure_filename(picName)
 
             picName = app.config['UPLOAD_FOLDER'], picName
@@ -239,11 +242,13 @@ def connect_user(data):
     users[data] = request.sid
 
 
-allPrivateMessages = []
+allPrivateMessages = {}
 # when it recieve message print it and send it back to all the client in js file with the bucket "message"
+
+
 @socketio.on('private_message')
 def handle_message(data):
-
+    print(session.get("sessionName") + ":" + "private message section")
     name = data.get('To')
     if name not in users or name == session.get("sessionName"):
         emit('private_message', 'Error, name doesn\'t exist!')
@@ -255,29 +260,57 @@ def handle_message(data):
 
     sanitizedMessage = cleanHTML(data['msg'])
 
-    emit('private_message', session.get("sessionName") +
-         ":" + sanitizedMessage, room=sessionID)
+    if name not in allPrivateMessages:
+        sendingTo = {}
+        sendingToList = []
+        sendingToList.append(session.get(
+            "sessionName") + ":" + sanitizedMessage)
+        sendingTo[session.get("sessionName")] = sendingToList
+        allPrivateMessages[name] = sendingTo
+    else:
+        if session.get("sessionName") not in allPrivateMessages[name]:
+            sendingToList = []
+            sendingToList.append(session.get(
+                "sessionName") + ":" + sanitizedMessage)
+            allPrivateMessages[name][session.get(
+                "sessionName")] = sendingToList
+        else:
+            currentMessage = allPrivateMessages[name][session.get(
+                "sessionName")]
+            currentMessage.append(session.get(
+                "sessionName") + ":" + sanitizedMessage)
+    if session.get("sessionName") not in allPrivateMessages:
+        sendingTo = {}
+        sendingToList = []
+        sendingToList.append(session.get(
+            "sessionName") + ":" + sanitizedMessage)
+        sendingTo[session.get("sessionName")] = sendingToList
+        allPrivateMessages[session.get("sessionName")] = sendingTo
+    else:
+        if session.get("sessionName") not in allPrivateMessages[session.get("sessionName")]:
+            sendingToList = []
+            sendingToList.append(session.get(
+                "sessionName") + ":" + sanitizedMessage)
+            allPrivateMessages[session.get("sessionName")][session.get(
+                "sessionName")] = sendingToList
+        else:
+            currentMessage = allPrivateMessages[session.get("sessionName")][session.get(
+                "sessionName")]
+            currentMessage.append(session.get(
+                "sessionName") + ":" + sanitizedMessage)
+    print(allPrivateMessages)
+    emit('private_message', {"msg": session.get("sessionName") +
+         ":" + sanitizedMessage, "toUser": session.get("sessionName")}, room=sessionID)
     emit('curent_user_message', session.get("sessionName") +
          ":" + sanitizedMessage, room=currentUserSessionID)
 
-    #print("########################")
-    username = session.get("sessionName")
-    #print("current USER:", username)
 
-    message = data['msg']
-    #print("message:", message)
-
-    toUser = data['To']
-
-    dict = {}
-    username = str(username)
-    dict[username] = {}
-    dict[username]['msg'] = message
-    dict[username]['To'] = toUser
-
-    allPrivateMessages.append(dict)
-
-    print(allPrivateMessages)
+@socketio.on("getOldMessages")
+def getOldMessages(newUser):
+    print(session.get("sessionName") + ":print all old message section")
+    if session.get("sessionName") in allPrivateMessages:
+        emit("getOldMessages",
+             allPrivateMessages[session.get("sessionName")][newUser])
 
 
 @socketio.on("disconnect")
@@ -372,8 +405,6 @@ def get_user_profile_pic_path(username):
     user = userCollection.find_one({"name": username})
     filename = user["profilePicName"]
     return app.config['UPLOAD_FOLDER'] + filename
-
-
 
 
 if __name__ == '__main__':

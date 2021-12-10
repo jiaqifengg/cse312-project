@@ -136,7 +136,7 @@
       <h4 style = "background-color: black; border-radius: 25px 25px 0 0; color: #7FFF00; border-bottom: 1px solid black; padding: 5px 10px 0px 10px">ONLINE USERS</h4>
       <div id="users">
         {% for user in users %}
-        <img src="{{ user[1] }}" style="border-radius: 50%; width: 35px;">&#160; &#160; &#160;{{user[0]}}
+        <p class="user">{{user[0]}}</p>
         {% endfor %}
 
       </div>
@@ -180,7 +180,7 @@
 
   <div id="right-side">
     <div id="top-userToDM">
-      {% for user in users %}
+      {% for user in users[:1] %}
       <p id="currentUser">{{user[0]}}</p>
       {% endfor %}
     </div>
