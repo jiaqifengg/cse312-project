@@ -72,61 +72,8 @@
     </ul>
   </nav>
 
-<!-- 
-  <div style = "margin-left: 25px;">
-  <h1>Welcome {{ session.sessionName }} !</h1>
-
-  <div id="left-side">
-    <div id = "sidebar">
-      <h2 class = "sidebarTitle">ONLINE USERS</h2>
-      <nav style = "margin: 0" class = "row">
-    
-      {% for user in users %}
-      <div class = "userBoxes"> -->
-        <!-- ADD IMAGE PROFILE HERE-->
-        <!-- <center>
-        <div class = "profile">
-          <img src = "">
-        </div>
-        <br>
-        <b><p class="user">{{user}}</p></b>
-        </center>
-      </div>
-
-    {% endfor %}
-      </nav>
-    </div>
-  </div>
-  <br>
-  <div id="right-side">
-    <div id="top">
-      <div id="display">
-      </div>
-    </div>
-    <div id="bottom">
-      <div id="input">
-        <p1>To:</p1>
-        <input type="text" id="toUser">
-        <p1>Message</p1>
-        <input type="text" id="myMessage">
-        <button type="button" id="send">Send</button>
-      </div>
-    </div>
-  </div>
-
-  </div>
-
-  <script type="text/javascript">
-    const username = `{{username}}`;
-  </script>
-
-
-  <script src="/static/js/jquery.js"></script>
-  <script src="/static/js/script.js"></script> -->
-
 
   <br>
-  <!-- <h1>Welcome {{ session.sessionName }} !</h1> -->
 
   <div style = "margin-left: 25px" id="left-side">
     <nav id="sidebar">
@@ -146,19 +93,6 @@
     <div class = "chatContainer">
       <ul class = "chatBoxes" id="postArea"> 
         <!-- -->
-        <div class="overall">
-          <li class="box">
-            <div class="chatProfile">
-              <img class="profileImageIcon" src='static\img\kitten.jpeg'>
-              <h6>username<h6>
-            </div>
-            <p class="message">post</p>
-          </li>
-          <div id="post_-1" class="chatComponent">
-            <button id="upButton" type="button">Upvote <span class="badge badge-primary badge-pill" id="upvotes_-1"> 100 </span></button><br>
-            <button id="downButton" type="button">Downvote <span class="badge badge-primary badge-pill" id="downvotes_-1"> 1 </span></button>
-          </div>
-        </div>
         <br>
       </ul>
     </div>
