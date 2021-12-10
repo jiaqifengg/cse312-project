@@ -29,11 +29,7 @@
       float: left;
       text-align: center;
       width: 300px;
-    }
-
-    #right-side {
-
-      margin-left: 300px;
+      min-height: 75px;
     }
 
     #top-userToDM {
@@ -41,6 +37,7 @@
     }
 
     #middle-display {
+      margin-left: 10px;
       height: 450px;
       overflow-y: auto;
     }
@@ -131,8 +128,8 @@
   <br>
   <!-- <h1>Welcome {{ session.sessionName }} !</h1> -->
 
-  <div style = "margin-left: 25px"id="left-side">
-    <navid="sidebar">
+  <div style = "margin-left: 25px" id="left-side">
+    <nav id="sidebar">
       <h4 style = "background-color: black; border-radius: 25px 25px 0 0; color: #7FFF00; border-bottom: 1px solid black; padding: 5px 10px 0px 10px">ONLINE USERS</h4>
       <div id="users">
         {% for user in users %}
@@ -191,9 +188,9 @@
       <div id="input">
         <h1 id="dmUser"></h1>
         <div class = "bottomSend">
-          <p1>Message</p1>
-          <input type="text" id="myMessage">
-          <button type="button" id="send">Send</button>
+          <p1>Msg</p1>
+          <input type="text" id="myMessage" placeholder = "Send DM!">
+          <button style = "background-color: #fdffa9; width: 75px; border-radius: 5px" type="button" id="send">Send</button>
         </div>
       </div>
     </div>

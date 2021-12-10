@@ -17,10 +17,10 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = '5008cafee462ca7c310116be'
 csrf = CSRFProtect(app)
 # change this to whatever you use locally if you test locally
-client = MongoClient(
-    "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
+#client = MongoClient(
+#   "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 # KEEP FOR DOCKER ==>
-# client = MongoClient("mongo")  # for docker
+client = MongoClient("mongo")  # for docker
 database = client['rocketDatabase']
 userCollection = database['users']
 activeUsers = database['activeUsers']
@@ -188,8 +188,6 @@ def uploadImage():
                         for i in range(8)) + picName
             picName = secure_filename(picName)
 
-            picName = app.config['UPLOAD_FOLDER'], picName
-
             # store in to the server
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], picName))
 
@@ -213,15 +211,11 @@ def home():
 
 
 ########## 404 PAGE ##########
-
-
 @app.errorhandler(404)  # Sets up custom 404 page!
 def pageNotFound(e):
     return render_template("404.html"), 404
 
 ########## 500 PAGE ##########
-
-
 @app.errorhandler(500)  # Sets up custom 500 page!
 def internalServerError(e):
     return render_template("500.html"), 500

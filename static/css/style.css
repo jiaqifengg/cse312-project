@@ -129,9 +129,6 @@ h2.sidebarTitle {
 }
 
 #right-side {
-  position: absolute;
-  top: 10%;
-  right: 15px;
   background-color: #a9b5ff;
   border: 1px solid black;
   border-radius: 5px;
@@ -191,4 +188,23 @@ h2.sidebarTitle {
 .chatContainer{
   overflow-y: scroll;
   height: 500px;
+}
+
+@media only screen and (min-width: 1351px) {
+  #right-side {
+    position: absolute;
+    right: 1%;
+    top: 11.2%;
+  }
+}
+@media only screen and (max-width: 1350px) {
+  .container {
+    margin-right: 35px;
+  }
+  #right-side {
+    position: absolute;
+    width: 325px;
+    right: 5%;
+    margin-top: 10px;
+  }
 }
