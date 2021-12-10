@@ -6,7 +6,7 @@ from pymongo import MongoClient
 from werkzeug.utils import secure_filename, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect, CSRFError
-import random
+import random, string
 
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -31,6 +31,10 @@ users = {}
 
 post_count = [0]
 posts = {}
+letters = string.ascii_letters
+numbers = string.digits
+csrfToken = ''.join(random.choice(letters+numbers) for i in range(64))
+print("TOKEN IS:", csrfToken)
 # {id: post:"", upvote:{username:username}, downvote:{username:username}}
 # using dictionary for upvote/downvote for O(1) access of who has voted
 
@@ -48,6 +52,9 @@ count = 0
 def handle_csrf_error(e):
     return render_template('csrf.html'), 400
 
+@app.route('/error')
+def error():
+    return render_template('csrf.html')
 
 @app.route("/")
 def index():
@@ -70,7 +77,7 @@ def index():
                 allUsers.append(_)
         print(allUsers)
 
-        return render_template('index.html', user_image=get_user_profile_pic_path(loginName), users=allUsers)
+        return render_template('index.html', user_image=get_user_profile_pic_path(loginName), users=allUsers, csrfToken=csrfToken)
     else:
         return render_template('notLoggedIn.html')
 
@@ -219,7 +226,6 @@ def connected():
 def connect_user(data):
     print("CONNECT USER DATA IS:", data)
     users[data] = request.sid
-
 
 allPrivateMessages = {}
 # when it recieve message print it and send it back to all the client in js file with the bucket "message"

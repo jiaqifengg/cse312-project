@@ -22,15 +22,37 @@ $(document).ready(function () {
     });
   });
 
+  var dmToken = $('.tokenB').val();
+  /*alert("ORIGINAL TOKEN IS:" + token);*/
+
+  var newDMToken = 5;
+
   //display incoming messages
   socket.on("private_message", function (data) {
     currentUser = $("#currentUser").text();
-    if (data["toUser"] == currentUser) {
+
+    $('.tokenB').on('input change', function() {
+      newDMToken = this.value;
+      /*alert("ANY INPUT CHANGE TOKEN IS:" + this.value);*/
+    }).change();
+
+    if (dmToken != newDMToken) {
+      alert("CSRF TOKEN ERROR, it was modified. Text will not be shown.")
+    } else {
+      if (data["toUser"] == currentUser) {
+        $("#middle-display")[0].innerHTML +=
+          '<p style="overflow-wrap: break-word; width: 100%;">' +
+          data["msg"] +
+          "</p>";
+      }
+    }
+
+    /*if (data["toUser"] == currentUser) {
       $("#middle-display")[0].innerHTML +=
         '<p style="overflow-wrap: break-word; width: 100%;">' +
         data["msg"] +
         "</p>";
-    }
+    }*/
     //console.log(msg)
     alert(data["msg"]);
   });
@@ -64,13 +86,30 @@ $(document).ready(function () {
     //console.log($(this).text());
   });
 
+  var token = $('.tokenA').val();
+  /*alert("ORIGINAL TOKEN IS:" + token);*/
+
+  var newToken = 5;
+
   $("#send_post").on("click", function () {
     var post_msg = $("#postMessage").val();
     var from_user = $("#username_post").text();
-    socket.emit("create_post", { post: post_msg, from: from_user });
+    
+    $('.tokenA').on('input change', function() {
+      newToken = this.value;
+      /*alert("ANY INPUT CHANGE TOKEN IS:" + this.value);*/
+    }).change();
+
+    if (token != newToken) {
+      alert("CSRF TOKEN ERROR, it was modified. Text will not be shown.")
+
+    } else {
+      socket.emit("create_post", { post: post_msg, from: from_user });
+    }
   });
 
   socket.on("make_post", function (data) {
+    
     // console.log(Object.keys(data).length)
     var overallDiv = html_post(data[Object.keys(data).length - 1]);
     $("#postArea")[0].innerHTML += overallDiv;
