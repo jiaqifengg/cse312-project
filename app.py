@@ -6,7 +6,8 @@ from pymongo import MongoClient
 from werkzeug.utils import secure_filename, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect, CSRFError
-import random, string
+import random
+import string
 
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -14,9 +15,10 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = '5008cafee462ca7c310116be'
 csrf = CSRFProtect(app)
 # change this to whatever you use locally if you test locally
-client = MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
+client = MongoClient(
+    "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 # KEEP FOR DOCKER ==>
-#client = MongoClient("mongo")  # for docker
+# client = MongoClient("mongo")  # for docker
 database = client['rocketDatabase']
 userCollection = database['users']
 activeUsers = database['activeUsers']
@@ -34,6 +36,7 @@ posts = {}
 # {id: post:"", upvote:{username:username}, downvote:{username:username}}
 # using dictionary for upvote/downvote for O(1) access of who has voted
 
+
 def html(stuff):
     return '<html><body>' + stuff + '</body></html>'
 
@@ -44,13 +47,16 @@ def cleanHTML(content):
 
 count = 0
 
+
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
     return render_template('csrf.html'), 400
 
+
 @app.route('/error')
 def error():
     return render_template('csrf.html')
+
 
 @app.route("/")
 def index():
@@ -73,9 +79,10 @@ def index():
                 allUsers.append(_)
         print(allUsers)
 
-        return render_template('index.html', user_image=get_user_profile_pic_path(loginName), users=allUsers, csrfToken=csrfToken)
+        return render_template('index.html', user_image=get_user_profile_pic_path(loginName), users=allUsers)
     else:
         return render_template('notLoggedIn.html')
+
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
@@ -204,14 +211,15 @@ def home():
 def csrf_restrist():
     return render_template("404.html")
 
+
 @app.route('/static/jquery.js')
 def csrf_restrist():
     return render_template("404.html")
 
+
 @app.route('/static/script.js')
 def csrf_restrist():
     return render_template("404.html")
-
 
 
 ########## 404 PAGE ##########
@@ -220,11 +228,15 @@ def pageNotFound(e):
     return render_template("404.html"), 404
 
 ########## 500 PAGE ##########
+
+
 @app.errorhandler(500)  # Sets up custom 500 page!
 def internalServerError(e):
     return render_template("500.html"), 500
 
 # when client go to "connected" give the username to the client that is connected on "connected"
+
+
 @socketio.on("connect")
 def connected():
     print("connected: ", session.get("sessionName"))
@@ -238,8 +250,10 @@ def connect_user(data):
     print("CONNECT USER DATA IS:", data)
     users[data] = request.sid
 
+
 allPrivateMessages = {}
 # when it recieve message print it and send it back to all the client in js file with the bucket "message"
+
 
 @socketio.on('private_message')
 def handle_message(data):
