@@ -18,8 +18,8 @@ $(document).ready(function () {
     //console.log(toUser);
 
     socket.emit("private_message", {
-        msg: message,
-        To: toUser,
+      msg: message,
+      To: toUser,
     });
   });
 
@@ -81,7 +81,6 @@ $(document).ready(function () {
   });
 
   socket.on("make_post", function (data) {
-    
     // console.log(Object.keys(data).length)
     var overallDiv = html_post(data[Object.keys(data).length - 1]);
     $("#postArea")[0].innerHTML += overallDiv;
@@ -95,17 +94,34 @@ $(document).ready(function () {
     var countUp = Object.keys(data["upvotes"]).length;
     var countDown = Object.keys(data["downvotes"]).length;
 
-    var overallDiv ='<div class="overall">\
+    var overallDiv =
+      '<div class="overall">\
                         <li class="box">\
                           <div class="chatProfile">\
-                            <img class="profileImageIcon" src=' + String(userImg) +">\
-                            <h6>" +username +'<h6>\
+                            <img class="profileImageIcon" src=' +
+      String(userImg) +
+      ">\
+                            <h6>" +
+      username +
+      '<h6>\
                           </div>\
-                          <p class="message">' + post +'</p>\
+                          <p class="message">' +
+      post +
+      '</p>\
                         </li>\
-                        <div class="chatComponent" id="post_' +String(post_id) +'">\
-                          <button id="upButton" type="button" onclick="voting(this);">Upvote <span class="badge badge-primary badge-pill" id="upvotes_' +String(post_id) +'">' +String(countUp) +'</span></button><br>\
-                          <button id="downButton" type="button" onclick="voting(this);">Downvote <span class="badge badge-primary badge-pill" id="downvotes_' +String(post_id) +'">' +String(countDown) +"</span></button>\
+                        <div class="chatComponent" id="post_' +
+      String(post_id) +
+      '">\
+                          <button id="upButton" type="button" onclick="voting(this);">Upvote <span class="badge badge-primary badge-pill" id="upvotes_' +
+      String(post_id) +
+      '">' +
+      String(countUp) +
+      '</span></button><br>\
+                          <button id="downButton" type="button" onclick="voting(this);">Downvote <span class="badge badge-primary badge-pill" id="downvotes_' +
+      String(post_id) +
+      '">' +
+      String(countDown) +
+      "</span></button>\
                         </div>\
                     </div>\
                     <br>";

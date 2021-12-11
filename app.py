@@ -41,11 +41,14 @@ numbers = string.digits
 csrfToken = ''.join(random.choice(letters+numbers) for i in range(64))
 print("TOKEN IS:", csrfToken)
 
+
 def html(stuff):
     return '<html><body>' + stuff + '</body></html>'
 
+
 def cleanHTML(content):
     return content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('\"', '&quot;').replace('\'', '&#39;')
+
 
 count = 0
 
@@ -81,7 +84,7 @@ def index():
                 allUsers.append(_)
         print(allUsers)
 
-        return render_template('index.html', user_image=get_user_profile_pic_path(loginName), users=allUsers)
+        return render_template('index.html', user_image=get_user_profile_pic_path(loginName), users=allUsers, csrfToken=csrfToken)
     else:
         return render_template('notLoggedIn.html')
 
@@ -207,21 +210,6 @@ def home():
     # activeUsers.delete_one({"name": session.get('sessionName')})
     session.pop('sessionName')
     return redirect('/')
-
-
-@app.route('/static/css/style.css')
-def csrf_restrist():
-    return render_template("404.html")
-
-
-@app.route('/static/jquery.js')
-def csrf_restrist():
-    return render_template("404.html")
-
-
-@app.route('/static/script.js')
-def csrf_restrist():
-    return render_template("404.html")
 
 
 ########## 404 PAGE ##########
