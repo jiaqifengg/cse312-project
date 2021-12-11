@@ -1,4 +1,4 @@
-from flask import Flask, render_template, json, url_for, redirect, request, session, send_from_directory
+from flask import Flask, render_template, json, url_for, redirect, request, session, send_from_directory, abort
 from flask_socketio import SocketIO, emit, join_room, leave_room
 import os
 import re
@@ -38,8 +38,8 @@ posts = {}
 
 letters = string.ascii_letters
 numbers = string.digits
-csrfToken = ''.join(random.choice(letters+numbers) for i in range(64))
-print("TOKEN IS:", csrfToken)
+csrfTokenA = ''.join(random.choice(letters+numbers) for i in range(64))
+csrfTokenB = ''.join(random.choice(letters+numbers) for i in range(64))
 
 
 def html(stuff):
@@ -84,7 +84,7 @@ def index():
                 allUsers.append(_)
         print(allUsers)
 
-        return render_template('index.html', user_image=get_user_profile_pic_path(loginName), users=allUsers, csrfToken=csrfToken)
+        return render_template('index.html', user_image=get_user_profile_pic_path(loginName), users=allUsers, csrfTokenA=csrfTokenA, csrfTokenB=csrfTokenB)
     else:
         return render_template('notLoggedIn.html')
 
@@ -224,6 +224,11 @@ def pageNotFound(e):
 def internalServerError(e):
     return render_template("500.html"), 500
 
+
+# @app.errorhandler(custom403)  # Sets up custom 500 page!
+# def internalServerError(e):
+#     return render_template("500.html"), 403
+
 # when client go to "connected" give the username to the client that is connected on "connected"
 
 
@@ -248,61 +253,67 @@ allPrivateMessages = {}
 @socketio.on('private_message')
 def handle_message(data):
     print(data)
-    print(session.get("sessionName") + ":" + "private message section")
-    name = data.get('To')
-    if name not in users or name == session.get("sessionName"):
-        emit('private_message', 'Error, name doesn\'t exist!')
-        return 'error'
+    print(csrfTokenB)
+    if(data["token"] != csrfTokenB):
+        print("Do Nothing")
 
-    sessionID = users[data["To"]]
-    currentUserSessionID = users[session.get("sessionName")]
-    # custom data
-
-    sanitizedMessage = cleanHTML(data['msg'])
-
-    if name not in allPrivateMessages:
-        sendingTo = {}
-        sendingToList = []
-        sendingToList.append(session.get(
-            "sessionName") + ":" + sanitizedMessage)
-        sendingTo[session.get("sessionName")] = sendingToList
-        allPrivateMessages[name] = sendingTo
     else:
-        if session.get("sessionName") not in allPrivateMessages[name]:
+        print(data)
+        print(session.get("sessionName") + ":" + "private message section")
+        name = data.get('To')
+        if name not in users or name == session.get("sessionName"):
+            emit('private_message', 'Error, name doesn\'t exist!')
+            return 'error'
+
+        sessionID = users[data["To"]]
+        currentUserSessionID = users[session.get("sessionName")]
+        # custom data
+
+        sanitizedMessage = cleanHTML(data['msg'])
+
+        if name not in allPrivateMessages:
+            sendingTo = {}
             sendingToList = []
             sendingToList.append(session.get(
                 "sessionName") + ":" + sanitizedMessage)
-            allPrivateMessages[name][session.get(
-                "sessionName")] = sendingToList
+            sendingTo[session.get("sessionName")] = sendingToList
+            allPrivateMessages[name] = sendingTo
         else:
-            currentMessage = allPrivateMessages[name][session.get(
-                "sessionName")]
-            currentMessage.append(session.get(
-                "sessionName") + ":" + sanitizedMessage)
-    if session.get("sessionName") not in allPrivateMessages:
-        sendingTo = {}
-        sendingToList = []
-        sendingToList.append(session.get(
-            "sessionName") + ":" + sanitizedMessage)
-        sendingTo[session.get("sessionName")] = sendingToList
-        allPrivateMessages[session.get("sessionName")] = sendingTo
-    else:
-        if session.get("sessionName") not in allPrivateMessages[session.get("sessionName")]:
+            if session.get("sessionName") not in allPrivateMessages[name]:
+                sendingToList = []
+                sendingToList.append(session.get(
+                    "sessionName") + ":" + sanitizedMessage)
+                allPrivateMessages[name][session.get(
+                    "sessionName")] = sendingToList
+            else:
+                currentMessage = allPrivateMessages[name][session.get(
+                    "sessionName")]
+                currentMessage.append(session.get(
+                    "sessionName") + ":" + sanitizedMessage)
+        if session.get("sessionName") not in allPrivateMessages:
+            sendingTo = {}
             sendingToList = []
             sendingToList.append(session.get(
                 "sessionName") + ":" + sanitizedMessage)
-            allPrivateMessages[session.get("sessionName")][session.get(
-                "sessionName")] = sendingToList
+            sendingTo[session.get("sessionName")] = sendingToList
+            allPrivateMessages[session.get("sessionName")] = sendingTo
         else:
-            currentMessage = allPrivateMessages[session.get("sessionName")][session.get(
-                "sessionName")]
-            currentMessage.append(session.get(
-                "sessionName") + ":" + sanitizedMessage)
-    print(allPrivateMessages)
-    emit('private_message', {"msg": session.get("sessionName") +
-         ":" + sanitizedMessage, "toUser": session.get("sessionName")}, room=sessionID)
-    emit('curent_user_message', session.get("sessionName") +
-         ":" + sanitizedMessage, room=currentUserSessionID)
+            if session.get("sessionName") not in allPrivateMessages[session.get("sessionName")]:
+                sendingToList = []
+                sendingToList.append(session.get(
+                    "sessionName") + ":" + sanitizedMessage)
+                allPrivateMessages[session.get("sessionName")][session.get(
+                    "sessionName")] = sendingToList
+            else:
+                currentMessage = allPrivateMessages[session.get("sessionName")][session.get(
+                    "sessionName")]
+                currentMessage.append(session.get(
+                    "sessionName") + ":" + sanitizedMessage)
+        print(allPrivateMessages)
+        emit('private_message', {"msg": session.get("sessionName") +
+                                 ":" + sanitizedMessage, "toUser": session.get("sessionName")}, room=sessionID)
+        emit('curent_user_message', session.get("sessionName") +
+             ":" + sanitizedMessage, room=currentUserSessionID)
 
 
 @socketio.on("getOldMessages")
@@ -325,20 +336,24 @@ def disconnect():
 
 @socketio.on('create_post')
 def insertPost(data):
-    username = session.get('sessionName')
-    userPicture = get_user_profile_pic_path(username)
-    post = data.get('post')
-    cleanedMessage = cleanHTML(post)
-    temp = {
-        "post-id": post_count[0],
-        "post": cleanedMessage,
-        "user": [username, userPicture],
-        "upvotes": {},
-        "downvotes": {}
-    }
-    posts[post_count[0]] = temp
-    post_count[0] += 1
-    emit('make_post', posts, broadcast=True)
+    if(data["token"] != csrfTokenA):
+        print("Do Nothing")
+
+    else:
+        username = session.get('sessionName')
+        userPicture = get_user_profile_pic_path(username)
+        post = data.get('post')
+        cleanedMessage = cleanHTML(post)
+        temp = {
+            "post-id": post_count[0],
+            "post": cleanedMessage,
+            "user": [username, userPicture],
+            "upvotes": {},
+            "downvotes": {}
+        }
+        posts[post_count[0]] = temp
+        post_count[0] += 1
+        emit('make_post', posts, broadcast=True)
 
 
 @socketio.on('vote')

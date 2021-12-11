@@ -16,10 +16,11 @@ $(document).ready(function () {
     var message = $("#myMessage").val();
     var toUser = $("#currentUser").text();
     //console.log(toUser);
-
+    var dmTokenB = $(".tokenB").val();
     socket.emit("private_message", {
       msg: message,
       To: toUser,
+      token: dmTokenB,
     });
   });
 
@@ -74,10 +75,15 @@ $(document).ready(function () {
   });
 
   $("#send_post").on("click", function () {
+    var dmTokenA = $(".tokenA").val();
     var post_msg = $("#postMessage").val();
     var from_user = $("#username_post").text();
 
-    socket.emit("create_post", { post: post_msg, from: from_user });
+    socket.emit("create_post", {
+      post: post_msg,
+      from: from_user,
+      token: dmTokenA,
+    });
   });
 
   socket.on("make_post", function (data) {
