@@ -36,6 +36,10 @@ posts = {}
 # {id: post:"", upvote:{username:username}, downvote:{username:username}}
 # using dictionary for upvote/downvote for O(1) access of who has voted
 
+letters = string.ascii_letters
+numbers = string.digits
+csrfToken = ''.join(random.choice(letters+numbers) for i in range(64))
+print("TOKEN IS:", csrfToken)
 
 def html(stuff):
     return '<html><body>' + stuff + '</body></html>'
@@ -255,6 +259,7 @@ allPrivateMessages = {}
 
 @socketio.on('private_message')
 def handle_message(data):
+    print(data)
     print(session.get("sessionName") + ":" + "private message section")
     name = data.get('To')
     if name not in users or name == session.get("sessionName"):
