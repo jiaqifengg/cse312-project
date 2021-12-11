@@ -37,10 +37,8 @@ posts = {}
 def html(stuff):
     return '<html><body>' + stuff + '</body></html>'
 
-
 def cleanHTML(content):
     return content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('\"', '&quot;').replace('\'', '&#39;')
-
 
 count = 0
 
@@ -73,7 +71,7 @@ def index():
                 allUsers.append(_)
         print(allUsers)
 
-        return render_template('index.html', user_image=get_user_profile_pic_path(loginName), users=allUsers, csrfToken=csrfToken)
+        return render_template('index.html', user_image=get_user_profile_pic_path(loginName), users=allUsers)
     else:
         return render_template('notLoggedIn.html')
 

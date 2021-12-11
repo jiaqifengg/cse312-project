@@ -11,29 +11,16 @@ $(document).ready(function () {
     socket.emit("user", username);
   });
 
-  var dmToken = $('.tokenB').val();
-  //alert("ORIGINAL TOKEN IS:" + dmToken);
-  var newDMToken = 5;
-
   //on click for send messages
   $("#send").on("click", function () {
     var message = $("#myMessage").val();
     var toUser = $("#currentUser").text();
     //console.log(toUser);
 
-    $('.tokenB').on('input change', function() {
-      newDMToken = this.value;
-      //alert("ANY INPUT CHANGE TOKEN IS:" + newDMToken);
-    }).change();
-
-    if (dmToken != newDMToken) {
-      alert("CSRF TOKEN ERROR, it was modified. Text will not be shown.");
-    } else {
-      socket.emit("private_message", {
+    socket.emit("private_message", {
         msg: message,
         To: toUser,
-      });
-    }
+    });
   });
 
   //display incoming messages
@@ -86,26 +73,11 @@ $(document).ready(function () {
     //console.log($(this).text());
   });
 
-  var token = $('.tokenA').val();
-  /*alert("ORIGINAL TOKEN IS:" + token);*/
-
-  var newToken = 5;
-
   $("#send_post").on("click", function () {
     var post_msg = $("#postMessage").val();
     var from_user = $("#username_post").text();
-    
-    $('.tokenA').on('input change', function() {
-      newToken = this.value;
-      /*alert("ANY INPUT CHANGE TOKEN IS:" + this.value);*/
-    }).change();
 
-    if (token != newToken) {
-      alert("CSRF TOKEN ERROR, it was modified. Text will not be shown.");
-      
-    } else {
-      socket.emit("create_post", { post: post_msg, from: from_user });
-    }
+    socket.emit("create_post", { post: post_msg, from: from_user });
   });
 
   socket.on("make_post", function (data) {
