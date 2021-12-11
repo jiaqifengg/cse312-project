@@ -11,40 +11,40 @@ $(document).ready(function () {
     socket.emit("user", username);
   });
 
+  var dmToken = $('.tokenB').val();
+  //alert("ORIGINAL TOKEN IS:" + dmToken);
+  var newDMToken = 5;
+
   //on click for send messages
   $("#send").on("click", function () {
     var message = $("#myMessage").val();
     var toUser = $("#currentUser").text();
-    console.log(toUser);
-    socket.emit("private_message", {
-      msg: message,
-      To: toUser,
-    });
+    //console.log(toUser);
+
+    $('.tokenB').on('input change', function() {
+      newDMToken = this.value;
+      //alert("ANY INPUT CHANGE TOKEN IS:" + newDMToken);
+    }).change();
+
+    if (dmToken != newDMToken) {
+      alert("CSRF TOKEN ERROR, it was modified. Text will not be shown.");
+    } else {
+      socket.emit("private_message", {
+        msg: message,
+        To: toUser,
+      });
+    }
   });
-
-  var dmToken = $('.tokenB').val();
-  /*alert("ORIGINAL TOKEN IS:" + token);*/
-
-  var newDMToken = 5;
 
   //display incoming messages
   socket.on("private_message", function (data) {
     currentUser = $("#currentUser").text();
 
-    $('.tokenB').on('input change', function() {
-      newDMToken = this.value;
-      /*alert("ANY INPUT CHANGE TOKEN IS:" + this.value);*/
-    }).change();
-
-    if (dmToken != newDMToken) {
-      alert("CSRF TOKEN ERROR, it was modified. Text will not be shown.")
-    } else {
-      if (data["toUser"] == currentUser) {
-        $("#middle-display")[0].innerHTML +=
-          '<p style="overflow-wrap: break-word; width: 100%;">' +
-          data["msg"] +
-          "</p>";
-      }
+    if (data["toUser"] == currentUser) {
+      $("#middle-display")[0].innerHTML +=
+        '<p style="overflow-wrap: break-word; width: 100%;">' +
+        data["msg"] +
+        "</p>";
     }
 
     /*if (data["toUser"] == currentUser) {
@@ -101,8 +101,8 @@ $(document).ready(function () {
     }).change();
 
     if (token != newToken) {
-      alert("CSRF TOKEN ERROR, it was modified. Text will not be shown.")
-
+      alert("CSRF TOKEN ERROR, it was modified. Text will not be shown.");
+      
     } else {
       socket.emit("create_post", { post: post_msg, from: from_user });
     }
