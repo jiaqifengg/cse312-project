@@ -199,6 +199,21 @@ def home():
     session.pop('sessionName')
     return redirect('/')
 
+
+@app.route('/static/css/style.css')
+def csrf_restrist():
+    return render_template("404.html")
+
+@app.route('/static/jquery.js')
+def csrf_restrist():
+    return render_template("404.html")
+
+@app.route('/static/script.js')
+def csrf_restrist():
+    return render_template("404.html")
+
+
+
 ########## 404 PAGE ##########
 @app.errorhandler(404)  # Sets up custom 404 page!
 def pageNotFound(e):
