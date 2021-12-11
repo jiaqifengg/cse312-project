@@ -124,7 +124,7 @@
         <h1 id="dmUser"></h1>
         <div class = "bottomSend">
           <form>
-            <input type="hidden" class = "tokenB" name="csrf_token" value="{{ csrfToken }}"/>
+            <input type="hidden" class = "tokenB" name="csrf_token" value="{{ csrf_token() }}"/>
             <input type="text" id="myMessage" placeholder = "Send DM!">
             <button style = "background-color: #fdffa9; width: 75px; border-radius: 5px" type="button" id="send">Send</button>
           </form>

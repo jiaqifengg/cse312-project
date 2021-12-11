@@ -31,10 +31,6 @@ users = {}
 
 post_count = [0]
 posts = {}
-letters = string.ascii_letters
-numbers = string.digits
-csrfToken = ''.join(random.choice(letters+numbers) for i in range(64))
-print("TOKEN IS:", csrfToken)
 # {id: post:"", upvote:{username:username}, downvote:{username:username}}
 # using dictionary for upvote/downvote for O(1) access of who has voted
 
